@@ -1008,3 +1008,215 @@ let rec eval env = function
 ```
 
 The computation is straightforward based on the type definition. Although it is very simple, we finish a calculator in only 14 lines. How beautiful OCaml is! To make this small expression system more complete, one may make the exp type polymorphic. To do it nice and easily, we should use GADT, which was introduced in OCaml 4.00. We will skip this advanced topic and focus on the module system in the next post.
+
+### Modules
+
+In all previous posts, we tried out OCaml features in the toplevel. The real world applications of course are divided into multiple source files (.ml files) that can be compiled and linked to byte code or native executables. To compile a file, one can use ocamlc (generating .cmo object file of byte code)
+
+```ocaml
+$ ocamlc -c a.ml
+```
+
+or ocamlopt (generating .cmx object file of native code). The basic usage is just like a C compiler. See the manual for details. To link one or more object files to an executable, we can do
+
+```ocaml
+$ ocamlc -o a.out a.cmo b.cmo
+```
+This can also be done in one step
+
+```ocaml
+$ ocamlc -o a.ml a.cmo b.ml
+```
+
+The order of the source files matters during compiling and linking:
+
+If b.ml depends on a.ml, a.ml must be compiled first. And a.cmo must be front of b.cmo in the link line.
+There is no main entry in OCaml programs and .ml files are evaluated in the link order.
+Therefore, cyclic dependencies between source files are not allowed.
+
+In real world, we always split large programs into multiple pieces, which not only make building faster but also add structure to them if abstraction nicely. They make large programs understandable, maintainable, and reusable. To enforce abstraction, OCaml actually treats each source file as a module. Besides .cmo (or .cmx) files, OCaml compiler also generates .cmi files, which specify the interfaces (or signatures in OCaml terms) of modules. By default, all type definitions, exceptions and values (including functions) are exposed. For each .ml file, however, one may explicitly write a .mli file to hide the implementation details. Only types, exceptions and values listed in the .mli can be accessed by other modules/files. One can generate the default .mli file by compiler
+
+```ocaml
+$ ocamlc -i a.ml
+```
+However, it is a bad practice because we should always think and define interfaces first.
+
+The compiler derives the module name by taking the capitalized base name of the source file (.ml or .mli file). This is because of the requirement that module names must be capitalized. Other modules may refer to components defined in mymodule.ml under the names Mymodule.name. So modules also provide namespaces besides structuring programs. We can also do open Mymodule, then use unqualified names. However, it may introduce name conflicts if the same identifier is defined in multiple modules. If so, the identifiers of module in last open win. We can still use fully qualified names to solve the conflicts. But a better and preferred way is local open:
+
+```ocaml
+let sum x y =
+  let open Int64 in
+  add x y
+```
+Lightweight local open is also possible:
+
+```ocaml
+let sum x y =
+  Int64.(add x y)
+```
+
+In Java, each top-level class residents in a .java file but one can define nested classes in another class. In OCaml, we can similarly define sub-modules inside a file that corresponds to a top-level module. Just like .mli and .ml, we have the signature construct sig...end and the structure construct struct...end when defining a module. As an abstraction mechanism, modules package together related definitions, such as the definitions of a data type and associated operations over that type. Signatures are interfaces for modules while structures contains an arbitrary sequence of definitions. I would like to emphasis again that we should think and define the signature first. For example, the following is a signature packaging together a hash map data type and their operations:
+
+```ocaml
+(** module signature *)
+module type HashMapSig = sig
+  (** Abstract data type of hash table. The users of module
+      don’t need to know its details and should NOT know. *)
+  type t
+  (** Concrete key type *)
+  type key_t = string
+  (** Concrete value type *)
+  type value_t = float
+  (** hash function type *)
+  type hash = key_t -> int
+
+  (** Creates a hash table of given size *)
+  val make : int -> t
+  (** Gets the value of a key *)
+  val get  : t -> key_t -> value_t option
+  (** Puts a key value pairs into hash table *)
+  val put  : t -> key_t -> value_t -> unit
+end
+```
+
+The structures, usually given a name with the module binding, provide the implementations. The following is a naive implementation of our hash map. One may define another structure implementing the same signature while using different internal data structures and algorithms. The abstraction provided by modules enables us to easily switch between implementations.
+
+```ocaml
+module HashMap : HashMapSig = struct
+  type key_t = string
+  type value_t = float
+  type t = (key_t * value_t) option array
+  (* To initialize hash table *)
+  let  empty : (key_t * value_t) option = None
+  (* Dummy implementation. *)
+  let  hash _ = 0
+  let  make n = Array.make n empty
+  let  get : t -> key_t -> value_t option =
+    fun tbl key -> match tbl.(hash key) with None -> None | Some (_, v) -> Some v
+  let  put : t -> key_t -> value_t -> unit =
+    fun tbl key value -> tbl.(hash key) <- Some (key, value)
+end
+```
+
+When binding a name to a structure, it is okey without restricting it by a signature. If so, all definitions in the structure will be exposed. However, it is better to have the signature restriction for encapsulation. With the signature restriction, we hide some implementation details of HashMap, e.g. local value/function defitions such as empty. More interestingly, we can export restricted types. For instance, the signature HashMapSig makes the type t abstract by not providing its actual representation as a concrete type. The users of modules should not be aware of or concern about the exact data types as long as they can create and work on the data type by the provided functions. On the other hand, the structure designers are free to choose the suitable data structures for different applications.
+
+Between abstract and concrete types, we could also have private types (declared with keyword private) in a signature that reveal some, but not all aspects of the implementation of a type. If a variant or record type is private, we won’t be able to construct its values (or update mutable fields) outside of the structure. But they can be de-structured normally in pattern matching or via the dot notation for record accesses.
+
+```ocaml
+module M : sig
+  type t = private A | B of int
+  val a : t
+  val b : int -> t
+  end
+= struct
+  type t = A | B of int
+  let a = A
+  let b n = assert (n > 0); B n
+end;;
+```
+
+Apply the example above in the toplevel and try the following:
+
+```ocaml
+# let x = M.A;;
+Error: Cannot create values of the private type M.t
+# let x = M.B 1;;
+Error: Cannot create values of the private type M.t
+# let x = M.b 1;;
+val x : M.t = M.B 1
+# match x with
+    M.A   -> print_string "A"
+  | M.B x -> print_int x;;
+1- : unit = ()
+```
+
+Private type abbreviation is also possible. But first of all, what is type abbreviation? In short, a type abbreviation is an alias or alternate name for a type, just like typedef in C/C++. With type abbreviations, it is easier to change an underlying type without changing all the code that uses the type. Because it is an alias, the type symbol introduced by type abbreviation is compatible with the original implementation type and should be interchangeable with it anywhere.
+
+```ocaml
+type t = int;;
+let x : t = 1;;
+x + 1;;
+x = 2;;
+```
+
+Unlike a regular type abbreviation, a private type abbreviation declares a type that is distinct from its implementation type. However, coercions from the type to implementation type, by using the :> operator, are permitted. The following example define a module of nonnegative integers based on private type abbreviation:
+
+```ocaml
+module N : sig
+  type t = private int
+  val of_int : int -> t
+  val to_int : t -> int
+  end
+= struct
+  type t = int
+  let of_int n = assert (n >= 0); n
+  let to_int n = n
+end;;
+```
+Try the expression below to understand what we discussed.
+
+```ocaml
+# let x = N.of_int 1;;
+val x : N.t = 1
+# x + 1;;
+Error: This expression has type N.t but an expression was expected of type
+         int
+# (x :> int) + 1;;
+- : int = 2
+# (1 :> N.t) + x;;
+Error: Type int is not a subtype of N.t
+```
+From the error message, we can see that OCaml treats N.t as a subtype of int but not vice versa, which makes sense in mathematics. Note that sub typing is a concept strongly related to class/object inheritance in object-oriented languages. Clearly, it is more flexible in OCaml.
+
+The third flavor of private types is private row types (e.g. objects and polymorphic variants). Since we have not cover row types, we skip this topic here.
+
+Our hash map module is not flexible because the key type, value type, and hash function are hard coded. It would be nicer if we can parameterize structures with pluggable definitions. OCaml supports this by functors that are “functions” from structures to structures. It allows the construction of a module parameterized by one or more other modules. A functor is simply a structure A parameterized by another (or more) structure B (and the expected signature). The functor can then be applied to some implementation of B, yielding the corresponding structure of A. Consider our hash map example. We can define a signature including the key type, value type, and hash function type.
+
+```ocaml
+module type HashSig = sig
+  type key_t
+  type value_t
+  val  hash : key_t -> int
+end
+```
+Now, we make the type key_t and value_t abstract in HashMapSig.
+
+```ocaml
+module type HashMapSig = sig
+  type t
+  type key_t
+  type value_t
+
+  val hash : key_t -> int
+  val make : int -> t
+  val get  : t -> key_t -> value_t option
+  val put  : t -> key_t -> value_t -> unit
+end
+```
+Finally, we parametrize the HashMap structure (called MakeHashMap here following the common name convention for functors) with HashSig.
+
+```ocaml
+module MakeHashMap (Hash : HashSig)
+  : HashMapSig with type key_t = Hash.key_t
+               with type value_t = Hash.value_t =
+struct
+  include Hash
+  type t = (key_t * value_t) option array
+  let  empty : (key_t * value_t) option = None
+  let  make n = Array.make n empty
+  let  get tbl key =
+    match tbl.(hash key) with
+      None -> None
+    | Some (_, v) -> Some v
+  let put : t -> key_t -> value_t -> unit = fun tbl key value ->
+    tbl.(hash key) <- Some (key, value)
+end
+```
+
+Note that we use sharing constraint (line 2 and 3) to make sure that the two modules Hash and HashMapSig define identical abstract types. We also use include construct (line 5) to extend the structure with definitions in Hash.
+
+Modules are very different from what we learned in previous posts as they are not first-class. That means we can’t define a variable whose value is a module, or a function that takes a module as an argument. Conceptually, OCaml is divided into two worlds:
+
+- a core language about values and types
+- a module language about structures and signatures
+- With first-class modules introduced in OCaml 3.12, it got a little bit blurred. First-class modules are ordinary values that can be created from and converted back to regular modules. With first-class modules, we can do advanced things such as runtime module choice (or dependency injection if you are from the Java world). We won’t cover first-class modules in this short tutorial. In the next post, we will discuss objects, which provide another approach of abstraction and encapsulation.
