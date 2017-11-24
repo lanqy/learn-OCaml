@@ -674,3 +674,168 @@ val map_id : 'a list -> 'a list = <fun>
 ```
  
 But why value restriction? Especially, it forbids polymorphism in many cases where it would be sound, just like our examples. Well, it is a solution to the soundness problem created by OCaml’s imperative features. To understand it, we will cover the imperative programming in OCaml in the next post.
+
+### Imperative Programming
+
+So far, we have been focusing on the functional features of OCaml, which doesn’t allow the destructive operations (e.g. assignment) of entities in a program. Accordingly, variables, i.e. identifiers referring to immutable values, are used in a mathematical sense. Although some languages such as Haskell prompt purely functional programming, OCaml does allow imperative programming, which we will discuss today.
+
+In imperative programming, computation is described as a series of statements that change a program’s state. The imperative programming is very nature in the context of Turing machine. Almost all modern computers are based on the model of Turing machine, where the program state is defined by the contents of memory and the machine instructions are used to modify them. Besides assignments, imperative programming also makes sense for some particular evaluation strategies such as input-output and exceptions. Because the concept and model of input-output are pretty uniform across modern operating system and programming languages, we will skip it while focus on mutable data structures and exceptions in what follows.
+
+##### Mutable Data Structures
+In OCaml, the principal tool to hold program’s state is the reference cell. Like the reference in C++, a reference cell always holds a value and the contents can be updated by assignment. Three basic operations are provided to create a reference cell, to retrieve the value, and to assign a new value.
+
+```ocaml
+# ref;;
+- : 'a -> 'a ref = <fun>
+# (!);;
+- : 'a ref -> 'a = <fun>
+# (:=);;
+- : 'a ref -> 'a -> unit = <fun>
+```
+ 
+The expression ref e creates a reference cell with the initial value e. The expression !r returns the value in the reference cell r, and the expression r := e replaces the contents with the value e.
+
+
+```ocaml
+# let n = ref 1 ;;
+val n : int ref = {contents = 1}
+# !n;;
+- : int = 1
+# n := 2;;
+- : unit = ()
+# !n;;
+- : int = 2
+```
+
+The really interesting thing in this example is the toplevel printout val n : int ref = {contents = 1}. It looks like that a reference cell is kind of a record with single field contents. Yes, it is. References cells are just a particular case of records with mutable fields in OCaml. By default, record fields are immutable. But a record field maybe declared as mutable in the type definition with the mutable keyword before the field label.
+
+```ocaml
+# type person =
+  {
+    name : string;
+    mutable age : int;
+  };;
+type person = { name : string; mutable age : int; }
+# let peter = {name = "Peter Pan"; age = 7};;
+val peter : person = {name = "Peter Pan"; age = 7}
+# peter.age <- 10;;
+- : unit = ()
+# peter.name <- "Peter New";;
+Error: The record field name is not mutable
+```
+Note that we use the operator <- for record field assignment, which is different from the operator := for reference cells. As reference cells are just records, it is possible to update them in the way of record:
+
+
+```ocaml
+# n.contents <- 3;;
+- : unit = ()
+# !n;;
+- : int = 3
+```
+Arrays, fixed-size vectors of values of the same type, are also mutable in OCaml. Array literals are in the form [|e1; e2; …; en|]. Out-of-bounds accesses for arrays will result in an exception raised.
+
+```ocaml
+# let a = [| 1; 2; 3 |];;
+val a : int array = [|1; 2; 3|]
+# a.(1) <- 4;;
+- : unit = ()
+# a;;
+- : int array = [|1; 4; 3|]
+# a.(5);;
+Exception: Invalid_argument "index out of bounds".
+```
+Strings are essentially byte arrays and thus also mutable. However, strings will become immutable in OCaml 4.02, which is a really good step to fix the historical cruft.
+
+One important thing to notice is the physical sharing of two arrays/records. In OCaml there are no implicit array/record copying. If we give two names to the same array/record, every modification on one array/record will be visible to the other:
+
+
+```ocaml
+# let p = peter;;
+val p : person = {name = "Peter Pan"; age = 7}
+# p.age <- 10;;
+- : unit = ()
+# p;;
+- : person = {name = "Peter Pan"; age = 10}
+# peter;;
+- : person = {name = "Peter Pan"; age = 10}
+# let b = a;;
+val b : int array = [|1; 4; 3|]
+# b.(0) <- 0;;
+- : unit = ()
+# a;;
+- : int array = [|0; 4; 3|]
+```
+
+In the previous post, we show that functions from partial application are weakly polymorphic because of value restriction. The value restriction doesn’t allow mutable data structures such as reference cell and array fully polymorphic either:
+
+```ocaml
+# let r = ref [];;
+val r : '_a list ref = {contents = []}
+# r := [3];;
+- : unit = ()
+# r;;
+- : int list ref = {contents = [3]}
+```
+
+Otherwise, it would allow a value of one type to be cast to another and hence would break type safety. For example, the following program would pass type check without value restriction.
+
+
+```ocaml
+let r: 'a option ref = ref None;;
+let r1: string option ref = r;;
+let r2: int option ref = r;;
+r1 := Some "foo";;
+let v: int = !r2;;
+```
+
+##### Control Structures
+Imperative programming describes the computation as a series of statements that change a program’s state. Therefore, the basic imperative structures is the sequence, which permits the left-to-right evaluation of a sequence of expressions separated by semicolons. A sequence of expressions is itself an expression, whose value is that of the last expression in the sequence. It should be emphasized that the semicolon ; is not a terminator as it is in C/C++. It is indeed like the comma , operator in C/C++. Because the sequence is an opened construct, it may introduce ambiguities. To be correct (or clear), we can add an enclosing begin..end or parentheses.
+
+
+```ocaml
+# let factorial n =
+  let f = ref 1 in
+  for i = 2 to n do
+    f := !f * i
+  done;
+  !f;;
+val factorial : int -> int = <fun>
+# factorial 10;;
+- : int = 3628800
+```
+ 
+OCaml also has for loop and while loop. The loops are expressions which have the value () of type unit. The above is a simple example using reference cell, sequence, and for loop altogether. I will not spend more time on the loop constructions. In practice, I rarely use them with OCaml. Instead of iterations, recursions are generally preferred in functional programing. We will discover more on recursions in the next post.
+
+##### Exceptions
+The exception mechanism in OCaml is similar to those in other languages such as Java and Python. It is mainly used for signalling and handling errors. But exceptions can also be used as a general-purpose non-local control structure. Exceptions, of the type exn, can be thrown with the raise operator and be trapped with the try..with construct.
+
+```ocaml
+try expression with
+| pattern1 -> expression1
+| pattern2 -> expression2
+| pattern3 -> expression3
+| pattern4 -> expression4
+```
+
+The expression is first evaluated and its value is returned as the result of the try expression if it doesn’t raise an exception. Otherwise, the exception value will go through the pattern match in the with part. If patterni matched, the corresponding expressioni is evaluated and returned as the result of the try expression. So expressioni must be of the same type as the expression of try body. The with part is not required to be complete as regular pattern matching. If no pattern matches, the exception is propagated to the next exception handler.
+
+The exn type is similar to the variant type. However, it is open, i.e. new exceptions can be added at different parts of the program.
+
+```ocaml
+# exception Empty_list;;
+exception Empty_list
+# let head l =
+  match l with
+  | [] -> raise Empty_list
+  | hd :: _ -> hd;;
+val head : 'a list -> 'a = <fun>
+# head [];;
+Exception: Empty_list.
+# try head [1; 2; 3] with
+  | Empty_list -> -1;;
+- : int = 1
+```
+ 
+The above example shows some simple usages of exceptions. Exceptions (and more general error-handling) could be very complicated in software engineering. We won’t discuss further on this big topic in such a short post.
+
+After eight sections, we have covered a lot of basic features of OCaml. Next time, we will show more examples using what we have learned. As you will see, most of them will be recursions.
