@@ -580,3 +580,97 @@ In OCaml, options are widely used to represent nullable values. It is a little l
 val add : ?x:int -> int -> int = <fun>
 ```
 We have reviewed some OCaml’s built-in algebraic data types. A lot of power of OCaml comes from its rich type system indeed. During our review, we also frequently meet polymorphic types and functions. In the next post, we will discuss OCaml’s approaches of polymorphism.
+
+### Polymorphism
+
+Object-oriented programmers are familiar with polymorphism. It is one of major capabilities of object-oriented languages besides encapsulation and inheritance. For most C++/Java programmers, polymorphism means dynamic dispatch, i.e. when a method is invoked on an object, the object itself determines what code gets executed by looking up the method at run time in a table associated with the object. Actually there are several fundamentally different kinds of polymorphism, which are all supported in C++.
+
+##### Ad hoc polymorphism
+Ad hoc polymorphism allows a function to denote different and potentially heterogeneous implementations depending on a limited range of individually specified types and combinations. It is supported in C++ using function overloading.
+
+##### Parametric polymorphism
+Parametric polymorphism allows a function or a data type to be written generically so that it can handle values identically without depending on their type. In C++, it is supported by templates and usually known as generic programming or compile-time polymorphism.
+
+##### Subtyping
+Subtype polymorphism (also called inclusion polymorphism) allows a function to be written to take an object of a certain type T, but also work correctly if passed an object of a subtype S. In C++, it is also known as runtime polymorphism.
+As we already learned, OCaml doesn’t support function overloading because it is pretty hard to have type inference and function overloading altogether. But OCaml does support parametric polymorphism and subtyping. Subtyping polymorphism is part of object-oriented programing, which we will explore later. In this post, we will focus on parametric polymorphism.
+
+Recall that C++ provides parametric polymorphism through templates, which is very powerful. The template system in C++ is indeed Turing-complete at compile time. In fact, it is also pure functional! There is no C++ kind of templates in OCaml. However, when OCaml’s type inference determines that an expression is valid for any type, it is automatically made polymorphic, parameterized by type variables. Type variables are lowercase identifiers preceded by a single quote ', normally 'a, 'b, 'c and so on. A type variable represents an arbitrary type. For example, we can define the identity function that returns its argument as follows.
+
+```ocaml
+# let id x = x;;
+val id : 'a -> 'a = <fun>
+# id 1;;
+- : int = 1
+# id "OCaml";;
+- : string = "OCaml"
+
+```
+The type val id : 'a -> 'a says that the id function takes an argument of some arbitrary type 'a and returns a value of the same type. The emphasized part is very important. Although the function can return a value of arbitrary type, the return type depends on the type of the argument. So for each particular use, the type of id can be determined. If not so, a function of completely unspecified type such as 'a -> 'b would allow any type conversion, a big contradiction to OCaml’s strong static typing.
+
+Multiple type variables could be involved in a function definition. Recall the built-in functions fst and snd that return the components of a pair have the following types:
+
+```ocaml
+# let fst (x, _) = x;;
+val fst : 'a * 'b -> 'a = <fun>
+# let snd (_, y) = y;;
+val snd : 'a * 'b -> 'b = <fun>
+```
+
+The compiler successfully determines that fst takes an argument of type 'a * 'b and returns a value of type 'a. Clearly, the second component is irrelevant to the function body of fst and its type, denoted as 'b, could be different from the type of the first one. On the other hand, OCaml’s compiler can also detect the constrains between the types of arguments. For example,
+ 
+```ocaml
+# let eq x y = x = y;;
+val eq : 'a -> 'a -> bool = <fun>
+```
+The compiler enforces that the function eq takes two arguments of same type, inferred from the type of the built-in comparison functions. BTW, the built-in hashing functions are also polymorphic.
+
+Although it is very cool that the compiler can automatically infer a polymorphic type, it is not desired in some cases. To avoid it, we can explicitly declare the type of argument.
+
+```ocaml
+# let id_int (i:int) = i;;
+val id_int : int -> int = <fun>
+```
+But why would we want to do this? Generics is cool, right? One reason is performance. Come back to the built-in comparison functions. Because it can work on any types, the compare function is pretty heavy. It actually calls an internal C function. In contrast, the following simple comparison function on int
+
+```ocaml
+# let cmp_int (a:int) (b:int) = a - b;;
+val cmp_int : int -> int -> int = <fun>
+```
+ 
+will be a simple register operation when compiled to machine code. If we do a lot of comparisons and the function is expected to apply on a specific type, it is of course better to declare it monomorphic explicitly.
+
+In OCaml, parametric polymorphism is introduced only through the let construct, which is called value restriction. Thus the function resulting from the application (including partial application) is not fully polymorphic.
+
+```ocaml
+# let weak_id = id id;;
+val weak_id : '_a -> '_a = <fun>
+# weak_id 1;;
+- : int = 1
+# weak_id;;
+- : int -> int = <fun>
+# weak_id "OCaml";;
+Error: This expression has type string but an expression was expected of type
+         int
+```
+ 
+The type variable '_a is now preceded by an underscore, which means some unknown type. The weak_id function can be used with values of only one type. When we apply the weak_id function to an int, the type of weak_id is fixed as int -> int, and it is no longer possible to apply to a value of other types.
+
+Here is an example of weak polymorphism by partial application:
+
+```ocaml
+# let map_id = List.map id;;
+val map_id : '_a list -> '_a list = <fun>
+# map_id [1; 2];;
+- : int list = [1; 2]
+# map_id;;
+- : int list -> int list = <fun>
+```
+To recover the full polymorphism, we can use a technique called eta-expansion. It sounds complicated but actually very simple: define the function with an explicit functional abstraction. That is, add a function construct or an extra parameter:
+
+```ocaml
+# let map_id l = List.map id l;;
+val map_id : 'a list -> 'a list = <fun>
+```
+ 
+But why value restriction? Especially, it forbids polymorphism in many cases where it would be sound, just like our examples. Well, it is a solution to the soundness problem created by OCaml’s imperative features. To understand it, we will cover the imperative programming in OCaml in the next post.
