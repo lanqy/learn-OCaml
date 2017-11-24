@@ -1,7 +1,7 @@
 # learn-OCaml
 Learn OCaml by example
 
-### OCaml: Pattern Matching
+### Pattern Matching
 
 After discussing of functions, we will explore the powerful pattern matching, which is almost everywhere in OCaml. In this post, we will confine us to the control structure feature, which has the following syntax:
 ```ocaml
