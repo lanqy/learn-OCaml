@@ -839,3 +839,172 @@ Exception: Empty_list.
 The above example shows some simple usages of exceptions. Exceptions (and more general error-handling) could be very complicated in software engineering. We won’t discuss further on this big topic in such a short post.
 
 After eight sections, we have covered a lot of basic features of OCaml. Next time, we will show more examples using what we have learned. As you will see, most of them will be recursions.
+
+### Recursion
+
+We have learned many interesting features of OCaml in our journey. Today we will do some exercises with them. As you will notice, many examples are recursive, which is very common in functional programming. Computer scientists love recursion because a lot of data structures and algorithms exhibit recursive behavior. In particular, divide and conquer is an important algorithm design paradigm based on multi-branched recursion, which solves a large problem by breaking it up into smaller and smaller pieces until we can solve it immediately for small trivial cases and then combine the results. So if a problem has the following properties:
+
+- A simple base case (or cases)
+- A set of rules that reduce all other cases toward the base case
+- we can solve it recursively. A common mistake when writing a recursive function is missing base case. Apparently, it will lead to infinite recursion, similar to infinite loop.
+
+In previous post, we show an imperative implementation of factorial function. As the factorial function can be naturally  represented as n! = n * (n-1)!, it can be easily implemented recursively.
+
+```ocaml
+let rec factorial = function
+  | (0|1) -> 1
+  | n when n < 0 -> failwith "negative argument for factorial"
+  | n -> n * factorial(n - 1);;
+```
+
+Here failwith is a standard library function that raises exception Failure with the given string. Not all algorithms are intuitive to be written recursively. For example, it is simple to write a naive primality test by for loop. However, the recursion version may be a little bit hard for beginners to grasp.
+
+```ocaml
+let is_prime n =
+  let rec is_not_divisor d =
+    d * d > n || (n mod d <> 0 && is_not_divisor (d+1))
+  in
+  match n with
+  | 1 -> false
+  | n when n <= 0 -> failwith "negative argument for primality test"
+  | n -> is_not_divisor 2;;
+```
+
+Although this is a good example how to rewrite an iteration recursively, I don’t recommend to do it painstakingly if not necessary.
+
+One possible reason that recursions are almost everywhere in OCaml programs is because of lists, the bread and butter of functional programming. Recall that list itself is a recursive data structure:
+
+```ocaml
+type 'a list =
+    []
+  | :: of 'a * 'a list;;
+```
+It is therefore not a surprise that many functions handling lists are implemented in a recursive way, especially with pattern matching. Suppose we want the sum of a list of integers.
+
+```ocaml
+let rec sum = function
+    [] -> 0
+  | x :: tl -> x + (sum tl);;
+```
+
+Similarly, we can also calculate the sums of a list of floats, or concat a list of strings. They are the examples of a general operation, fold (or reduce, accumulate, aggregate, …), that traverses a recursive data structure and builds a return value through an accumulator that stores partial results. For lists, the folding could be from left to right,
+
+```ocaml
+let rec fold_left f accu l =
+  match l with
+    [] -> accu
+ | a::l -> fold_left f (f accu a) l;;
+or from right to left.
+
+let rec fold_right f l accu =
+  match l with
+    [] -> accu
+  | a::l -> f a (fold_right f l accu);;
+```
+
+Both functions are available in the standard library module List. Note that fold_left and fold_right may produce different results on the same list with the same combine operation.
+
+```ocaml
+# List.fold_left  (-) 0 [1;2;3;4];;
+- : int = -10
+# List.fold_right (-) [1;2;3;4] 0;;
+- : int = -2
+```
+
+Now, let’s implement the famous quicksort, a classic divide-and-conquer algorithm, on lists. Quicksort first divides a large list into two smaller sub-lists: the low elements and the high elements. Quicksort can then recursively sort the sub-lists. We first implement the partition function that returns a pair of lists (l1, l2), where l1 is the list of all the elements of l that satisfy the predicate p, and l2 is the list of all the elements of l that do not satisfy p.
+
+```ocaml
+let partition p l =
+  let rec part yes no = function
+      [] -> (List.rev yes, List.rev no)
+    | x :: l -> if p x then part (x :: yes) no l else part yes (x :: no) l
+  in
+  part [] [] l;;
+```
+
+Then it is straightforward to write the quicksort function. For simplicity, we use the first element in the current list as the pivot, which could be far from the optimal choice. It is actually the worst choice if the list is already sorted.
+
+```ocaml
+let rec quicksort = function
+    ([] | [_]) as l -> l
+  | pivot :: tl ->
+      let less x = x < pivot in
+      let left, right = partition less tl in
+      (quicksort left) @ [pivot] @ (quicksort right);;
+```
+The operator @ concats two lists to one. Try it on some short lists to verify our implementation.
+
+```ocaml
+# quicksort [3; 2; 4; 1; 7; 9; 8];;
+- : int list = [1; 2; 3; 4; 7; 8; 9]
+```
+
+For long lists (says of 1 million elements), however, we will get the error
+
+Stack overflow during evaluation (looping recursion?)
+The reason is that every function call pushes a new stack frame to the call stack. Given that call stack space is very limited, it is easy to get stack overflow with recursions on large lists. Fortunately, most compilers are smart to optimize tail calls without adding a new stack frame. A tail call is a function call performed as the final action of a function. If all of recursive calls are tail calls, it is said to be tail-recursive. Note that tail call must be the last action in the sense of computation, not just lexically. Recall the map function:
+
+```ocaml
+let rec map f = function
+    [] -> []
+  | x :: l -> f x :: map f l;;
+```
+
+Lexically, the recursive call seems the last step of function. But it is not. The cons operator :: is indeed. It is possible to rewrite the map function in a tail-recursive way:
+
+```ocaml
+let rec map_tailrec acc f = function
+    [] -> List.rev acc
+  | hd :: tl -> let r = f hd in map_tailrec (r :: acc) f tl;;
+```
+
+This is achieved by an additional “accumulator” argument (acc in the above example) that accumulates the result of the operations at each step. We can rewrite a tail-recursive factorial function in similar way. Do it as an exercise and have fun!
+
+Besides recursive functions, recursive data types are also common and natural in OCaml. List is an examined example. Binary tree is another good example.
+
+```ocaml
+type 'a tree =
+    Leaf of 'a
+  | Node of 'a * 'a tree * 'a tree;;
+```
+
+Finally, let’s create a calculator as our last example.
+
+```ocaml
+type exp =
+  | Val of float
+  | Var of string
+  | Add of exp * exp
+  | Mul of exp * exp;;
+```
+According to this type, an expression is either an float constant value, or a variable denoted by a string, or the addition of two expressions, or the multiplication of two expressions. The below is an example of such expression ((x + 1.) * 3.).
+
+```ocaml
+let e = Mul (Add (Var "x", Val 1.), Val 3.);;
+```
+
+To make it more visually appealing, we can define a couple of helper functions:
+
+```ocaml
+let ( + ) x y = Add (x, y);;
+let ( * ) x y = Mul (x, y);;
+let cst x = Val x;;
+let var x = Var x;;
+```
+Now, we can write the expression in the normal infix way. The function cst and var are to “lift” floats and strings to the type exp.
+
+```ocaml
+let e = (var "x" + cst 1.) * cst 3.;;
+```
+
+Now we are going to write a function eval to evaluate the value of an expression. Because expressions may contain variables, eval has to take an environment argument (env in the example) that is an associative list of (string, float).
+
+```ocaml
+let rec eval env = function
+  | Val x -> x
+  | Var x -> List.assoc x env
+  | Add (x, y) -> eval env x +. eval env y
+  | Mul (x, y) -> eval env x *. eval env y;;
+```
+
+The computation is straightforward based on the type definition. Although it is very simple, we finish a calculator in only 14 lines. How beautiful OCaml is! To make this small expression system more complete, one may make the exp type polymorphic. To do it nice and easily, we should use GADT, which was introduced in OCaml 4.00. We will skip this advanced topic and focus on the module system in the next post.
