@@ -1,6 +1,112 @@
 # learn-OCaml
 Learn OCaml by example
 
+### Expressions
+
+In previous post, we started our journey of OCaml with a light discussion on functional programming. All functional programming languages are expression-oriented, i.e. every (or nearly every) construction is an expression and thus yields a value. In this post, we will study some basic expressions through code snippets, which can be directly tried out in the interactive OCaml interpreter called “toplevel”. Note that OCaml’s toolchain also includes a bytecode compiler and an optimizing native code compiler. Don’t worry if you don’t have OCaml available on your system. The website Try OCaml provides a complete online REPL in a webpage.
+
+Toplevel repeatedly reads OCaml phrases from the input, then typechecks, compile and evaluate them, then prints the inferred type and result value. Toplevel prints a # prompt before reading each phrase, which can span several lines and is terminated by a double-semicolon. Note that the double semicolon in toplevel exists for historical reasons and is not really needed in the source files for compilation. Besides, an opening comment paren (* will absorb everything as part of the comment until a well-balanced closing comment paren *) is found. Nested comments are handled correctly (Oh Yeah!).
+
+In a terminal, simply type ocaml to launch the toplevel. One can use the toplevel as a calculator. OCaml provides the common arithmetic operators on int and float (can’t start with a decimal point). For example, type the following simple expressions in the toplevel:
+
+```ocaml
+ # 2+3;; - : int = 5 # 2.+.3.;; - : float = 5. 
+ ```
+ 
+Of course, we will get the right answer 5 and 5., respectively. Compared to dynamically typed languages such as Python, the toplevel first prints the type of the result as OCaml is strongly typed. On the other hand, it looks odd for C/C++ programmers that OCaml uses the different operators (+ vs +.) on int and float, respectively. In fact, OCaml does’t have implicit type conversion and thus the following expression is invalid:
+
+```ocaml
+ # 2.+3;; Error: This expression has type float but an expression was expected of type int 
+```
+
+Without automatic cast, OCaml prevents some kinds of bugs in C/C++. Moreover, the different set of arithmetic operators on int and float makes the type inference easier. This has more impacts on subtyping and objects, which we will discuss later. Besides, OCaml provides a set of coercion functions on primitive types int, float, bool, char, and string.
+
+
+```ocaml
+ # int_of_float 2. + 3;; - : int = 5 
+```
+
+Here we apply the function int_of_float to cast 2. to an integer. In OCaml, function application is as simple as prefix juxtaposition, no parentheses are needed. But parentheses can be used for disambiguation and changing precedence.
+
+
+```ocaml
+ # float_of_int (2 + 3);; - : float = 5. 
+```
+
+Now it is time for the classic hello world example.
+
+
+```ocaml
+ # print_string "Hello world!\n";; Hello world! - : unit = () 
+```
+
+Several interesting things to notice. First, string is a built-in primitive type and string literals are written in double-quotes with the usual C-style backslash escapes. Strings can be concatenated by the operator ^. The string type consists of a series of 8-bit bytes in essence but there’s no built-in support for handling UTF-8. Strings are very unusual in OCaml in that they are mutable data structures. We will discuss the mutable data structures in another post.
+
+Because every expression yields a value, this printing expression must also return a value. As shown in the top-level, the value is written as () of the unit type. The unit type consists of exactly one value and is used to represent the type of expressions that have “no value”, i.e. expressions that are evaluated for side-effects only. Besides printing functions, the value of a while or for loop (both of which are expressions, not statements) is also of type unit. As while or for loops are expressions, so are if expressions.
+
+Before finding out the types of if expressions, let’s look at the bool type since the presence of the conditional construct implies the presence of boolean values. The type bool is composed of two values true and false. As usual, there are comparison operators returning boolean values. Most of these operators will look familiar: =, <>, <, <=, >, >=. The comparison operators are polymorphic meaning they work on most built-in data types. Note that polymorphic and automatic casting are two different concepts. In fact, one can’t compare two values of different types (e.g. 1 = 1.) due to the strongly-typed nature of OCaml.
+
+Because functions are first-class citizens just like any other values, one may wonder if we can compare two functions for equality? The answer is NO because comparing two functions is undecidable in general. If we can compare two functions, then we can say if a function terminates or not. But the halting problem is undecidable for Turing machines and Lambda calculus.
+
+Back to if expressions. In OCaml, if is much more like the conditional operator ? : in C. The if expression is in the form of
+
+
+```ocaml
+if <bool_expression> then <expression1> else <expression2>
+```
+
+OCaml requires that both branches of an if expression have the same type. If the <bool_expression> is true, then <expression1> is evaluated and is the value of the if expression, otherwise <expression2> is evaluated and is the value of the if expression. Since an expression must have a value, the else part is required unless the then part returns ().
+
+We have briefly discussed some aspects of expressions. But there are plenty of features and details left. You are encouraged very much to explore more in the official OCaml website. In the next post of this series, I will talk about the variables in OCaml.
+
+### Variables
+
+In the previous post, we discussed the expressions in OCaml and used the toplevel as a calculator. It is fun but for any serious programs we need variables and functions, which we will talk about in this and next posts. But wait a second. We said that functional programming avoids state and mutable data but variables sound like mutable things, right? Yes, it is true in imperative programming as a variable basically holds program state and refers to the machine representation of data structures and its value changes over the time. However, the idea of a variable in functional programming is different and the purpose is to designate values symbolically. It also lets us factor certain computations by naming a computed value so that it can be reused later. That is, variables are simply name binding to values.
+
+In OCaml, variables can be introduced by the let keyword, called let binding. The name of a variable, i.e. identifier, has to begin with a lowercase letter and consist of letters, digits, the underscore _ or the prime '.
+
+```ocaml
+# let x = 2 + 3;;
+val x : int = 5
+```
+
+As shown above, the toplevel prints the variable x's value and more importantly its type int. Although this is a very simple example, OCaml can infer the types of very complicated expressions by the unification algorithm, which is the process of finding a substitution that makes two given terms equal. Pattern matching, a very power construct in OCaml, is actually also based on the unification algorithm. Type inference is very cool because it enables us to write succinct code like dynamic languages yet type-safe. Of course, we are still allowed to declare the type of a variable explicitly.
+
+```ocaml
+# let x : int = 2 + 3;;
+val x : int = 5
+```
+
+It is usually not necessary but could be needed in rare situations where OCaml compiler cannot determine the type of an expression. Besides, it can also be useful in case of subtyping.
+
+Every variable binding has a scope. In a toplevel, the scope of let binding is everything that follows it in the session. When in a source file (or module), the scope is the remainder of that file/module.
+
+Local binding, i.e. a variable binding whose scope is limited to an expression, is also possible (and encouraged) with the syntax
+
+```ocaml
+let <variable> = <expression1> in <expression2>
+```
+
+The <expression2> is called the body of the let in construct. The <variable> is defined only in the body <expression2> but not in <expression1>. It is an expression and the value is the value of the body. For example,
+
+```ocaml
+# let z =
+    let x = 1 in
+    let y = 2 in
+    x + y;;
+val z : int = 3
+```
+
+The let in bindings do not have global scope. After evaluation, the variable x is the one defined earlier.
+
+```ocaml
+# x;;
+- : int = 5
+```
+
+That is, a let binding in an inner scope can shadow the definition from an outer scope. Binding is not an assignment and it is static (lexical scoping), i.e. the value associated with a variable is determined by nearest enclosing definition.
+
+In the next post, we will discuss the most exciting thing in OCaml, functions!
 
 ### functions
 
