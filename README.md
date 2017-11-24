@@ -1220,3 +1220,126 @@ Modules are very different from what we learned in previous posts as they are no
 - a core language about values and types
 - a module language about structures and signatures
 - With first-class modules introduced in OCaml 3.12, it got a little bit blurred. First-class modules are ordinary values that can be created from and converted back to regular modules. With first-class modules, we can do advanced things such as runtime module choice (or dependency injection if you are from the Java world). We won’t cover first-class modules in this short tutorial. In the next post, we will discuss objects, which provide another approach of abstraction and encapsulation.
+
+### Objects
+
+In previous post, we had a quick review of OCaml’s module system, which provides abstraction, encapsulation, and namespace. Today, we will look into OCaml’s supports of object-oriented programming (OOP). Besides abstraction and encapsulation, OOP also provides inheritance, subtyping, and dynamic binding, which modules don’t support.
+
+In OOP, an object contains some data called fields/attributes and has methods manipulating these data. Therefore, OOP is intrinsically imperative as objects hold program state. The creators of OCaml carefully designed the language to make OOP live nicely with functional programming.
+
+Because OOP has a huge influence to many programming languages in last 40 years, I assume that you are already familiar with the basic concepts. However, C++/Java programmers and Smalltalk/Ruby programmers please hold tight. You will get a lot of surprises in what follows.
+
+##### Objects
+
+In C++/Java, classes play a central role. Remember C++ was originally called “C with Classes”. In these class-based languages, a class is indeed a data type while an object is a variable of specific class. Just like a primitive data type defining the data representation and valid operators on its variables, a class definition includes member fields and methods.
+
+In pure OOP languages such as Smalltalk/Ruby, everything including primitive values is an objects and all computations are done by sending messages to objects to do so. Any message can be sent to any object: when a message is received, the receiver determines whether that message is appropriate. Actually, messaging is the most important concept in Smalltalk/Ruby despite the attention given to objects. Same as in C++/Java, classes are the blueprints of objects and an object is always an instance of a class. Interestingly, classes are actually first-class objects in Smalltalk/Ruby — each is an instance of class Class (yes, we have a recursion here 🙂 ). Therefore, classes can receive messages just like any other objects and can be created dynamically at execution time.
+
+Very different from C++/Java and Smalltalk/Ruby, an object is not required to associate with a class in OCaml. In fact, objects and their types (object types) are separated from class system. We still have classes in OCaml but they are not types. Classes are mainly to support inheritance. Let’s see some examples of objects.
+
+```ocaml
+# let s = object
+  val mutable lifo = [0; 1; 2; 3]
+
+  method push v =
+    lifo <- v :: lifo
+
+  method pop =
+    match lifo with
+    | [] -> None
+    | hd :: tl ->
+      lifo <- tl;
+      Some hd
+end;;
+val s : < pop : int option; push : int -> unit > = <obj>
+```
+ 
+Here we define an object s of integer stack. First of all, the object s is of the object type < pop : int option; push : int -> unit >. Note that only methods appear in the type specification while fields are not. Besides, although the type of method push, int -> unit, looks like a regular function type, the type of method pop doesn’t. Because method calls always associate with an object, they may have no explicit arguments (but could have an implicit argument like this in C++/Java). Second, there is no constructors. We don’t really need a constructor because the object...end construct itself is an expression to create objects. On the other hand, we do need a way to initialize the fields of an object rather than hard-code values. To do that, we can define functions taking the advantage that object...end construct is an expression.
+ 
+```ocaml
+# let stack s = object
+  val mutable lifo = s
+
+  method push v =
+    lifo <- v :: lifo
+
+  method pop =
+    match lifo with
+    | [] -> None
+    | hd :: tl ->
+      lifo <- tl;
+      Some hd
+end;;
+val stack : 'a list -> < pop : 'a option; push : 'a -> unit > = <fun>
+# let s = stack [0; 1; 2; 3];;
+val s : < pop : int option; push : int -> unit > = <obj>
+# s#pop;;
+- : int option = Some 0
+# s#push 4;;
+- : unit = ()
+```
+ 
+This function does the job of constructor while it is not part of an object or class. Recall that we can “update” an immutable record using the with syntax that actually returns a new record. Similarly, we can define immutable objects whose methods return new objects using the expression {< ... >} that produces a copy of the current object with specified fields updated.
+ 
+```ocaml
+# let immutable_stack s = object
+  val lifo = s
+
+  method push hd = {< lifo = hd :: lifo >}
+
+  method pop =
+    match lifo with
+    | hd :: tl -> Some (hd, {< lifo = tl >})
+    | [] -> None
+end;;
+val immutable_stack :
+  'a list -> (< pop : ('a * 'b) option; push : 'a -> 'b > as 'b) = <fun>
+```
+ 
+##### Row Polymorphism
+Since objects are values, we can define functions taking object arguments:
+```ocaml
+# let pop s = s#pop;;
+val pop : < pop : 'a; .. > -> 'a = <fun>
+```
+This dummy function is simple but its type is very interesting. The type < pop : 'a; .. > means that an object of this type can be any object that has the pop method, and possibly some other unspecified methods. Heterogeneous objects that has no relations at all could be of the same open object type as long as they support the required methods. Clearly, it is different from subtyping. In OCaml, this is called row polymorphism while it is better known as duck typing. The name of duck typing refers to the duck test, according to James Whitcomb Riley:
+
+When I see a bird that walks like a duck and swims like a duck and quacks like a duck, I call that bird a duck.
+
+With duck typing, we only need to ensure that objects behave as required in a given context, rather than of a specific type. This is more flexible than the static class-based approach in C++/Java. In C++, duck typing is actually supported by templates. However, it is not fun to deal with incredibly long and cryptic compiling error messages with meta-programming. In Java, duck typing may be achieved with reflection, which is not easy either. Duck typing is fundamental to Smalltalk/Ruby, where behavior is triggered by messages sent between objects. The receiver checks its method list for a matching behavior. If no method matched, it produces a run-time error. Technically, a message with no matching method is not necessarily an error as the default behavior could be overridden. But we generally prefer finding errors early, right? Compared to them, OCaml’s row polymorphism is a neater and safer approach of duck typing.
+
+##### Subtyping
+Given the title of this section, you probably think that we will start talking about classes and inheritance. No, subtyping and inheritance are different concepts in OCaml. Inheritance is a syntactic relation between classes while subtyping is a semantic relation between types. An object type ot2 could be a subtype of ot1 if
+
+It includes all of the methods of ot1
+Each method of ot2 that is a method of ot1 is a subtype of the ot1 method
+Let’s take the classic widget example without defining the class tree.
+
+```ocaml
+type widget = < draw : int -> int -> unit >
+type button = < draw : int -> int -> unit; label : string >
+```
+
+A button has a method draw just like a widget, and an additional method label. Semantically, we expect a button to be a widget. To test it out, let’s define a helper function returning a button:
+
+```ocaml
+# let make_button s : button = object
+  method draw x y = print_int x; print_int y (* dummy implementation *)
+  method label = s
+end;;
+val make_button : string -> button = <fun>
+```
+ 
+In OCaml, subtyping is never implicit. We can use the coercion operator :> to explicitly perform subtyping.
+
+```ocaml
+# let make_widget s = (make_button s :> widget);;
+val make_widget : string -> widget = <fun>
+```
+ 
+As indicated by the function type, make_widget returns a widget even though it is indeeds a button.
+
+Both subtyping and row polymorphism allow us to apply some functions to objects of different types. In general, row polymorphism is preferred because it does not require explicit coercions and preserves more type information.
+
+OOP is a big topic (check the size of The C++ Programming Language book). It is impossible to cover everything about the “O” of OCaml in a short post. Check out the manual for more details. I just hope that what we discussed is interesting enough getting you into learning and using OCaml in your next cool project!
+
