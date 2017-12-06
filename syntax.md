@@ -42,8 +42,5 @@
 |<tt>for i = 10 downto 1 do ... done</tt>|循环（对于数值范围中的每个值，减1）|
 |<tt>for i = 1 to 10 do ... done</tt>|循环（对于数值范围中的每个值，加1 ）|
 |<tt>while c do ... done</tt>|循环 (循环满足某个条件做某事)|
-|<tt><pre>match val with
- \| v1 -&gt; ...
- \| v2 \| v3 -&gt; ...
- \| _ -&gt; ...</pre></tt>|模式匹配|
+|match val with <br/> \| v1 -&gt; ... <br/> \| v2 \| v3 -&gt; ... <br/> \| _ -&gt; ...|模式匹配|
 |<tt>;</tt>|序列|
