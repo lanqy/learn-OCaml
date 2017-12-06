@@ -3,9 +3,9 @@
 ### 
 <table border="1" cellpadding="6">
 <tbody><tr><td><tt>nothing needed</tt></td><td>breaking lines (useful when end-of-line and/or indentation has a special meaning)</td></tr>
-<tr><td><tt>(* ... *)</tt></td><td>commenting (nestable)</td></tr>
-<tr><td><tt>&lt; &gt; &lt;= &gt;=</tt></td><td>comparison</td></tr>
-<tr><td><tt>min / max</tt></td><td>comparison (min / max (binary or more))</td></tr>
+<tr><td><tt>(* ... *)</tt></td><td>注释 (可嵌套)</td></tr>
+<tr><td><tt>&lt; &gt; &lt;= &gt;=</tt></td><td>对比</td></tr>
+<tr><td><tt>min / max</tt></td><td>对比 (min / max (binary or more))</td></tr>
 <tr><td><tt>compare</tt></td><td>comparison (returns 3 values (i.e. inferior, equal or superior))</td></tr>
 <tr><td><tt>(** ... *)</tt></td><td>documentation comment</td></tr>
 <tr><td><tt>= &lt;&gt;</tt></td><td>equality / inequality (deep)</td></tr>
