@@ -2,9 +2,7 @@
 
 ### 
 |   |   |
-
 |---|---|
-
 | <tt>nothing needed</tt> | breaking lines (useful when end-of-line and/or indentation has a special meaning)  | 
 |<tt>(* ... *)</tt>|注释 (可嵌套)|
 |<tt>&lt; &gt; &lt;= &gt;=</tt>|对比|
