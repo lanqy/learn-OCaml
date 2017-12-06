@@ -15,9 +15,9 @@
 |<tt>( ... )</tt>|分组表达式|
 |<tt>begin ... end</tt>|分组表达式|
 |<tt>case-sensitive</tt>|tokens（区分大小写（关键字，变量标识符...））|
-|<tt>[_A-Z][_a-zA-Z0-9']*</tt>|tokens (constant regexp (if different from variable identifier regexp))|
-|<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens (type regexp (if different from variable identifier regexp))|
-|<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens (variable identifier regexp)|
+|<tt>[_A-Z][_a-zA-Z0-9']*</tt>|tokens（常量正则（如果与变量标识符正则不同））|
+|<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens （类型正则（如果不同于变量标识符正则表达式））|
+|<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens （变量标识符正则表达式）|
 |<tt>underscores for functions / types, unclear for modules / constructors</tt>|tokens (what is the standard way for <a href="http://c2.com/cgi/wiki?CapitalizationRules">scrunching together multiple words</a>)|
 |<tt>&lt;-</tt>|变量赋值或声明（赋值）|
 |<tt>let v = e in</tt>|变量赋值或声明（声明）|
