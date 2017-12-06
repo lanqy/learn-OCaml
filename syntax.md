@@ -1,6 +1,7 @@
 ### Ocaml 语法
 
 ### 
+|   |   |
 |---|---|
 | <tt>nothing needed</tt> | breaking lines (useful when end-of-line and/or indentation has a special meaning)  | 
 |<tt>(* ... *)</tt>|注释 (可嵌套)|
@@ -18,5 +19,5 @@
 |<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens (type regexp (if different from variable identifier regexp))|
 |<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens (variable identifier regexp)|
 |<tt>underscores for functions / types, unclear for modules / constructors</tt>|tokens (what is the standard way for <a href="http://c2.com/cgi/wiki?CapitalizationRules">scrunching together multiple words</a>)|
-|<tt>&lt;-</tt>|variable assignment or declaration (assignment)|
-|<tt>let v = e in</tt>|variable assignment or declaration (declaration)|
+|<tt>&lt;-</tt>|变量赋值或声明（赋值）|
+|<tt>let v = e in</tt>|变量赋值或声明（声明）|
