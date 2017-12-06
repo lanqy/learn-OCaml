@@ -5,11 +5,11 @@
 <tbody><tr><td><tt>nothing needed</tt></td><td>breaking lines (useful when end-of-line and/or indentation has a special meaning)</td></tr>
 <tr><td><tt>(* ... *)</tt></td><td>注释 (可嵌套)</td></tr>
 <tr><td><tt>&lt; &gt; &lt;= &gt;=</tt></td><td>对比</td></tr>
-<tr><td><tt>min / max</tt></td><td>对比 (min / max (binary or more))</td></tr>
-<tr><td><tt>compare</tt></td><td>comparison (returns 3 values (i.e. inferior, equal or superior))</td></tr>
-<tr><td><tt>(** ... *)</tt></td><td>documentation comment</td></tr>
-<tr><td><tt>= &lt;&gt;</tt></td><td>equality / inequality (deep)</td></tr>
-<tr><td><tt>== !=</tt></td><td>equality / inequality (shallow)</td></tr>
+<tr><td><tt>min / max</tt></td><td>对比 (最小 / 最大 (二进制 或者 更多))</td></tr>
+<tr><td><tt>compare</tt></td><td>对比 (返回三个值 (即： 小于,等于或者大于))</td></tr>
+<tr><td><tt>(** ... *)</tt></td><td>文档注释</td></tr>
+<tr><td><tt>= &lt;&gt;</tt></td><td>等于 / 不等于 (深比较)</td></tr>
+<tr><td><tt>== !=</tt></td><td>等于 / 不等于 (浅比较)</td></tr>
 <tr><td><tt>Gc.full_major()</tt></td><td>force garbage collection</td></tr>
 <tr><td><tt>( ... )</tt></td><td>grouping expressions</td></tr>
 <tr><td><tt>begin ... end</tt></td><td>grouping expressions</td></tr>
