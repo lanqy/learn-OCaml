@@ -1,23 +1,21 @@
 ### Ocaml 语法
 
 ### 
-<table border="1" cellpadding="6">
-<tbody><tr><td><tt>nothing needed</tt></td><td>breaking lines (useful when end-of-line and/or indentation has a special meaning)</td></tr>
-<tr><td><tt>(* ... *)</tt></td><td>注释 (可嵌套)</td></tr>
-<tr><td><tt>&lt; &gt; &lt;= &gt;=</tt></td><td>对比</td></tr>
-<tr><td><tt>min / max</tt></td><td>对比 (最小 / 最大 (二进制 或者 更多))</td></tr>
-<tr><td><tt>compare</tt></td><td>对比 (返回三个值 (即： 小于,等于或者大于))</td></tr>
-<tr><td><tt>(** ... *)</tt></td><td>文档注释</td></tr>
-<tr><td><tt>= &lt;&gt;</tt></td><td>等于 / 不等于 (深比较)</td></tr>
-<tr><td><tt>== !=</tt></td><td>等于 / 不等于 (浅比较)</td></tr>
-<tr><td><tt>Gc.full_major()</tt></td><td>强制垃圾回收</td></tr>
-<tr><td><tt>( ... )</tt></td><td>分组表达式</td></tr>
-<tr><td><tt>begin ... end</tt></td><td>分组表达式</td></tr>
-<tr><td><tt>case-sensitive</tt></td><td>tokens（区分大小写（关键字，变量标识符...））</td></tr>
-<tr><td><tt>[_A-Z][_a-zA-Z0-9']*</tt></td><td>tokens (constant regexp (if different from variable identifier regexp))</td></tr>
-<tr><td><tt>[_a-z][_a-zA-Z0-9']*</tt></td><td>tokens (type regexp (if different from variable identifier regexp))</td></tr>
-<tr><td><tt>[_a-z][_a-zA-Z0-9']*</tt></td><td>tokens (variable identifier regexp)</td></tr>
-<tr><td><tt>underscores for functions / types, unclear for modules / constructors</tt></td><td>tokens (what is the standard way for <a href="http://c2.com/cgi/wiki?CapitalizationRules">scrunching together multiple words</a>)</td></tr>
-<tr><td><tt>&lt;-</tt></td><td>variable assignment or declaration (assignment)</td></tr>
-<tr><td><tt>let v = e in</tt></td><td>variable assignment or declaration (declaration)</td></tr>
-</tbody></table>
+|<tt>nothing needed</tt>| breaking lines (useful when end-of-line and/or indentation has a special meaning)  | 
+|<tt>(* ... *)</tt>|注释 (可嵌套)|
+|<tt>&lt; &gt; &lt;= &gt;=</tt>|对比|
+|<tt>min / max</tt>|对比 (最小 / 最大 (二进制 或者 更多))|
+|<tt>compare</tt>|对比 (返回三个值 (即： 小于,等于或者大于))|
+|<tt>(** ... *)</tt>|文档注释|
+|<tt>= &lt;&gt;</tt>|等于 / 不等于 (深比较)|
+|<tt>== !=</tt>|等于 / 不等于 (浅比较)|
+|<tt>Gc.full_major()</tt>|强制垃圾回收|
+|<tt>( ... )</tt>|分组表达式|
+|<tt>begin ... end</tt>|分组表达式|
+|<tt>case-sensitive</tt>|tokens（区分大小写（关键字，变量标识符...））|
+|<tt>[_A-Z][_a-zA-Z0-9']*</tt>|tokens (constant regexp (if different from variable identifier regexp))|
+|<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens (type regexp (if different from variable identifier regexp))|
+|<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens (variable identifier regexp)|
+|<tt>underscores for functions / types, unclear for modules / constructors</tt>|tokens (what is the standard way for <a href="http://c2.com/cgi/wiki?CapitalizationRules">scrunching together multiple words</a>)|
+|<tt>&lt;-</tt>|variable assignment or declaration (assignment)|
+|<tt>let v = e in</tt>|variable assignment or declaration (declaration)|
