@@ -1,5 +1,7 @@
 ## Ocaml 语法
 
+### Ocaml 语法
+
 ### 基础
 | 代码  | 描述 |
 |---|---|
@@ -28,3 +30,20 @@
 |<tt>f()</tt>|函数调用（无参数）|
 |<tt>let f para1 para2 = ...</tt>|函数定义|
 |<tt>no syntax needed</tt>|函数返回值（函数体就是函数的返回值）|
+
+### 控制流
+
+| 代码  | 描述 |
+|---|---|
+|<tt>try a with exn -&gt; ...</tt>|异常捕获|
+|<tt>raise</tt>|抛出异常|
+|<tt>if c then ...</tt>|if_then|
+|<tt>if c then b1 else b2</tt>|if_then_else|
+|<tt>for i = 10 downto 1 do ... done</tt>|循环（对于数值范围中的每个值，减1）|
+|<tt>for i = 1 to 10 do ... done</tt>|循环（对于数值范围中的每个值，加1 ）|
+|<tt>while c do ... done</tt>|循环 (循环满足某个条件做某事)|
+|<tt><pre>match val with
+ | v1 -&gt; ...
+ | v2 | v3 -&gt; ...
+ | _ -&gt; ...</pre></tt>|模式匹配|
+|<tt>;</tt>|序列|
