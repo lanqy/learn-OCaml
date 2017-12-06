@@ -1,1 +1,1 @@
-## Ocaml syntax
+# Ocaml syntax
