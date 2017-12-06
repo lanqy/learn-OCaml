@@ -1,4 +1,4 @@
-# Ocaml syntax
+### Ocaml 语法
 
 ### 
 <table border="1" cellpadding="6">
@@ -10,10 +10,10 @@
 <tr><td><tt>(** ... *)</tt></td><td>文档注释</td></tr>
 <tr><td><tt>= &lt;&gt;</tt></td><td>等于 / 不等于 (深比较)</td></tr>
 <tr><td><tt>== !=</tt></td><td>等于 / 不等于 (浅比较)</td></tr>
-<tr><td><tt>Gc.full_major()</tt></td><td>force garbage collection</td></tr>
-<tr><td><tt>( ... )</tt></td><td>grouping expressions</td></tr>
-<tr><td><tt>begin ... end</tt></td><td>grouping expressions</td></tr>
-<tr><td><tt>case-sensitive</tt></td><td>tokens (case-sensitivity (keywords, variable identifiers...))</td></tr>
+<tr><td><tt>Gc.full_major()</tt></td><td>强制垃圾回收</td></tr>
+<tr><td><tt>( ... )</tt></td><td>分组表达式</td></tr>
+<tr><td><tt>begin ... end</tt></td><td>分组表达式</td></tr>
+<tr><td><tt>case-sensitive</tt></td><td>tokens（区分大小写（关键字，变量标识符...））</td></tr>
 <tr><td><tt>[_A-Z][_a-zA-Z0-9']*</tt></td><td>tokens (constant regexp (if different from variable identifier regexp))</td></tr>
 <tr><td><tt>[_a-z][_a-zA-Z0-9']*</tt></td><td>tokens (type regexp (if different from variable identifier regexp))</td></tr>
 <tr><td><tt>[_a-z][_a-zA-Z0-9']*</tt></td><td>tokens (variable identifier regexp)</td></tr>
