@@ -1,7 +1,9 @@
 ### Ocaml 语法
 
 ### 
-|<tt>nothing needed</tt>| breaking lines (useful when end-of-line and/or indentation has a special meaning)  | 
+
+| <tt>nothing needed</tt> | breaking lines (useful when end-of-line and/or indentation has a special meaning)  | 
+|---|---|
 |<tt>(* ... *)</tt>|注释 (可嵌套)|
 |<tt>&lt; &gt; &lt;= &gt;=</tt>|对比|
 |<tt>min / max</tt>|对比 (最小 / 最大 (二进制 或者 更多))|
