@@ -1,9 +1,8 @@
-### Ocaml 语法
+## Ocaml 语法
 
-### 
+### 基础
 | 代码  | 描述 |
 |---|---|
-| <tt>nothing needed</tt> | breaking lines (useful when end-of-line and/or indentation has a special meaning)  | 
 |<tt>(* ... *)</tt>|注释 (可嵌套)|
 |<tt>&lt; &gt; &lt;= &gt;=</tt>|对比|
 |<tt>min / max</tt>|对比 (最小 / 最大 (二进制 或者 更多))|
@@ -20,3 +19,12 @@
 |<tt>[_a-z][_a-zA-Z0-9']*</tt>|tokens （变量标识符正则表达式）|
 |<tt>&lt;-</tt>|变量赋值或声明（赋值）|
 |<tt>let v = e in</tt>|变量赋值或声明（声明）|
+
+### 函数
+| 代码  | 描述 |
+|---|---|
+|<tt>fun a b -&gt; ...</tt>|匿名函数|
+|<tt>f a b ...</tt>|函数调用（ a 和 b 为参数）|
+|<tt>f()</tt>|函数调用（无参数）|
+|<tt>let f para1 para2 = ...</tt>|函数定义|
+|<tt>no syntax needed</tt>|函数返回值（函数体就是函数的返回值）|
