@@ -124,3 +124,17 @@ val twice : string -> string = <fun>
 val four_times : string -> string = <fun>
 ```
 
+### 递归定义
+
+#### 用 let rec 定义。
+* 使用 rec 可以引用函数定义中定义的函数名称。
+
+阶乘的例子:
+
+```ocaml
+# let rec fact x =
+    if x <= 1 then 1 else x * fact (x - 1);;
+val fact : int -> int = <fun>
+# fact 5;;
+- : int = 120
+```
