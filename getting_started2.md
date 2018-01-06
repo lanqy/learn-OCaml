@@ -220,3 +220,25 @@ val area : figure -> int = <fun>
 - : int = 48
 ```
 
+### 多态变体类型
+
+* 可以使用类型变量（'a等）来定义变体类型，
+* 它也被称为带参数的参数。
+* 例如，'a list 可以使用多态变量来表示。
+
+```ocaml
+# type 'a mylist =
+  | Nil
+  | Cons of 'a * 'a mylist;;
+type 'a mylist = Nil | Cons of 'a * 'a mylist
+# Nil;;
+- : 'a mylist = Nil
+
+(* 表示一个整数列表 *)
+# Cons(1, Nil);;
+- : int mylist = Cons (1, Nil)
+
+(* 表示字符列表 *)
+# Cons('a', Cons('b', Nil));;
+- : char mylist = Cons ('a', Cons ('b', Nil))
+```
