@@ -122,3 +122,41 @@ val map : ('a -> 'b) -> 'a list -> 'b list = <fun>
 val foldr : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b = <fun>
 ```
 
+### 模式匹配守卫子句
+
+match 表达式 with 模式1 when 真/假表达式 - >表达式| ...
+
+使用 when。
+
+### 注意：match，function 中没有关闭符号
+
+在match with 和 function 上没有结束符号。
+
+因此，当模式匹配嵌套时，必须用（）等括起来
+
+### 数据结构
+
+#### 记录（record）
+
+C语言结构，数据结构等同于Python字典。
+
+命名元素名称。
+
+#### 记录定义
+
+* type name = {field name：type; ...}
+* 字段 - >名称和值对
+* 请注意，字段名称不能与其他记录重复
+
+```ocaml
+# type student = {name: string; id: int};;
+type student = { name : string; id : int; }
+```
+#### 创建记录
+
+* {Field name = value; ...}
+
+```ocaml
+# let s = {name = "hoge"; id = 1};;
+val s : student = {name = "hoge"; id = 1}
+```
