@@ -266,3 +266,174 @@ val fact : int -> int option = <fun>
 - : int option = None
 ```
 
+### 递归变体类型
+
+在构造函数中 of 下面是它自己的类型出现的变体类型
+
+#### 二叉树的例子
+
+```ocaml
+# type 'a btree =
+  | Leaf
+  | Node of 'a * 'a btree * 'a btree;;
+type 'a btree = Leaf | Tree of 'a * 'a btree * 'a btree
+
+# Node(1, Node(1, Leaf, Leaf), Node(1, Node(1, Leaf, Leaf), Leaf));;
+- : int btree =
+Node (1, Node (1, Leaf, Leaf), Node (1, Node (1, Leaf, Leaf), Leaf))
+```
+查找树的元素数量和高度的函数示例
+
+```ocaml
+# let tr = Node(1, Node(1, Leaf, Leaf), Node(1, Node(1, Leaf, Leaf), Leaf));;  
+val tr : int btree =
+  Node (1, Node (1, Leaf, Leaf), Node (1, Node (1, Leaf, Leaf), Leaf))
+
+(* 用于查找高度的函数 *)
+# let rec height = function
+  | Leaf -> 0
+  | Node(_, left, right) -> 1 + max (height left) (height right);;
+val height : 'a btree -> int = <fun>
+# height tr;;
+- : int = 3
+
+(* 用于查找元素数目的函数 *)
+# let rec size = function
+  | Leaf -> 0
+  | Node (_, left, right) -> 1 + size left + size right;;
+val size : 'a btree -> int = <fun>
+# size tr;;
+- : int = 4
+```
+
+#### 二叉搜索树的例子
+
+* 添加元素
+
+```ocaml
+# let rec insert x = function
+  | Leaf -> Node(x, Leaf, Leaf)
+  | Node(k, left, right) ->
+      if x < k then Node(k, insert x left, right)
+      else Node(k, left, insert x right);;
+val insert : 'a -> 'a btree -> 'a btree = <fun>
+```
+
+* 搜索元素
+
+```ocaml
+# let rec mem x = function
+  | Leaf -> false
+  | Node(k, left, right) ->
+      if x < k then mem x left
+      else if x = k then true
+      else mem x right;;
+val mem : 'a -> 'a btree -> bool = <fun>
+```
+
+* 使用例子
+
+```ocaml
+# let tr = Leaf;;
+val tr : 'a btree = Leaf
+# tr;;
+- : 'a btree = Leaf
+# insert 10 tr;;
+- : int btree = Node (10, Leaf, Leaf)
+# let tr = insert 10 tr;;
+val tr : int btree = Node (10, Leaf, Leaf)
+# let tr = insert 5 tr;;
+val tr : int btree = Node (10, Node (5, Leaf, Leaf), Leaf)
+# let tr = insert 20 tr;;
+val tr : int btree = Node (10, Node (5, Leaf, Leaf), Node (20, Leaf, Leaf))
+# mem 5 tr;;
+- : bool = true
+# mem 15 tr;;
+- : bool = false
+```
+
+### 玫瑰树的一个例子
+
+玫瑰树是元素数量未知的树。
+
+它可以被认为是与UNIX相同的目录结构。
+
+* 类型定义 
+
+```ocaml
+(* 由于子元素的数量是不确定的，节点的元素是列表 *)
+# type 'a rosetree = RLeaf | RNode of 'a * 'a rosetree list;;
+type 'a rosetree = RLeaf | RNode of 'a * 'a rosetree list
+```
+XML作为玫瑰树
+
+* 类型定义
+
+因为它是XML，叶子也没有价值 - >（'b option）
+
+```ocaml
+(* 'a 标记, 'b 值 *)
+# type ('a, 'b) xml = XLeaf of 'b option | XNode of 'a * ('a, 'b) xml list;;
+type ('a, 'b) xml = XLeaf of 'b option | XNode of 'a * ('a, 'b) xml list
+```
+对XML数据结构进行字符串化的函数
+
+递归XML（Rose Tree）包含一个递归数据结构的列表
+
+它是相互递归的定义
+```ocaml
+# let rec string_of_xml = function
+  | XNode(tag, xml_list) -> "<" ^ tag ^ ">" ^ string_of_xmllist xml_list ^ "</" ^ tag ^ ">"
+  | XLeaf None -> ""
+  | XLeaf(Some s) -> s
+  and
+  string_of_xmllist = function
+  | [] -> ""
+  | xml :: rest -> string_of_xml xml ^ string_of_xmllist rest;;
+val string_of_xml : (string, string) xml -> string = <fun>
+val string_of_xmllist : (string, string) xml list -> string = <fun>
+```
+
+### 无限的列
+
+#### 整数的无限列的例子
+
+```ocaml
+# type intseq = Cons of int * (int -> intseq);;
+type intseq = Cons of int * (int -> intseq)
+```
+* 无限列的示例递增
+
+```ocaml
+# let rec f x = Cons(x+1, f);;
+val f : int -> intseq = <fun>
+# f 0;;
+- : intseq = Cons (1, <fun>)
+# f 100;;
+- : intseq = Cons (101, <fun>)
+```
+* 如果返回值的x是下一个元素
+
+   通过给x作为参数，我们得到元素的顺序
+   
+```ocaml
+# let Cons(x, f) = f 0;;
+val x : int = 1
+val f : int -> intseq = <fun>
+# let Cons(x, f) = f x;;
+val x : int = 2
+val f : int -> intseq = <fun>
+# let Cons(x, f) = f x;;
+val x : int = 3
+val f : int -> intseq = <fun>
+```
+* 获取第N个元素函数
+
+```ocaml
+# let rec nthseq n (Cons(x, f)) =
+    if n = 1 then x
+    else nthseq (n-1) (f x);;
+val nthseq : int -> intseq -> int = <fun>
+# nthseq 10 (f 0);;
+- : int = 10
+```
