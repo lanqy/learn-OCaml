@@ -242,3 +242,27 @@ type 'a mylist = Nil | Cons of 'a * 'a mylist
 # Cons('a', Cons('b', Nil));;
 - : char mylist = Cons ('a', Cons ('b', Nil))
 ```
+
+### Optional
+
+通常说可选，表明这些情况下没有值
+
+```ocaml
+# type 'a option =
+  | None
+  | Some of 'a;;
+type 'a option = None | Some of 'a
+```
+使用可选的示例
+
+```ocaml
+# let fact n =
+    let rec fact' n = if n = 0 then 1 else n * fact' (n - 1) in
+    if n < 0 then None else Some (fact' n);;
+val fact : int -> int option = <fun>
+# fact 3;;
+- : int option = Some 6
+# fact (-10);;
+- : int option = None
+```
+
