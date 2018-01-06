@@ -127,6 +127,7 @@ val four_times : string -> string = <fun>
 ### 递归定义
 
 #### 用 let rec 定义。
+
 * 使用 rec 可以引用函数定义中定义的函数名称。
 
 阶乘的例子:
@@ -137,4 +138,108 @@ val four_times : string -> string = <fun>
 val fact : int -> int = <fun>
 # fact 5;;
 - : int = 120
+```
+
+### 相互递归
+
+* 两个或多个函数相互调用的样式的递归定义。
+
+* let rec 函数名称1 参数1 = 表达式1 and 函数名称2 参数2 = 表达式2 and ...
+
+```ocaml
+# let rec even n =
+    match n with
+    | 0 -> true
+    | x -> odd (x-1)
+  and odd n =
+    match n with
+    | 0 -> false
+    | x -> even (x-1);;
+val even : int -> bool = <fun>
+val odd : int -> bool = <fun>
+
+# even 10;;
+- : bool = true
+# even 3;;
+- : bool = false
+# odd 3;;
+- : bool = true
+# odd 10;;
+- : bool = false
+```
+
+### 匿名函数
+
+#### fun 参数名 = 表达式
+* let f 参数 = 表达式 是 let f = fun 参数 = 表达式 的语法糖
+* 因为 fun 是尽可能地认识到它是一个函数定义，所以最好在必要时用（）分割它。
+
+### 高阶函数
+
+定义一个函数作为参数
+
+```ocaml
+# let twice f x = f (f x);;
+val twice : ('a -> 'a) -> 'a -> 'a = <fun>
+# twice (fun x -> x * x) 3;;
+- : int = 81
+
+# let fourth x = 
+    let square y = y * y in
+    twice square x;;
+val fourth : int -> int = <fun>
+# fourth 3;;
+- : int = 81
+```
+
+### 柯里化函数
+
+```ocaml
+# let concat_curry s1 = fun s2 -> s1 ^ s2 ^ s1;;
+val concat_curry : string -> string -> string = <fun>
+# concat_curry "a";;  (* 部分適用 *)
+- : string -> string = <fun>
+# (concat_curry "a") "b";;
+- : string = "aba"
+```
+
+### 柯里化语法糖
+
+一下这个定义
+```ocaml
+let concat_curry s1 s2 = s1 ^ s2 ^ s1;;
+```
+
+与以下相同
+
+```ocaml
+let concat_curry s1 = fun s2 -> s1 ^ s2 ^ s1;;
+```
+
+也就是说，当参数排序的时候，以下代码
+
+```ocaml
+# let fuga x y z = x + y + z;;
+val fuga : int -> int -> int -> int = <fun>
+```
+
+实际上可以展开为以下代码
+
+```ocaml
+# let hoge x = fun y -> fun z -> x + y + z;;
+val hoge : int -> int -> int -> int = <fun>
+```
+
+函数是左结合，所以可以扩展如下：
+
+```ocaml
+f x y z => (((f x) y) z)
+```
+
+函数类型构造函数是右结合的
+
+```ocaml
+int - > int - > int - > int = <fun>
+解释为
+int - >（int - >（int - > int））= <fun>
 ```
