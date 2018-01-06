@@ -202,3 +202,21 @@ val c : figure = Circle 4
 val figs : figure list = [Point; Rectangle (1, 1); Circle 4]
 ```
 
+### 变体的模式匹配
+
+#### function | 构造函数的参数 -> | ...
+
+省略参数部分意味着没有参数构造函数。
+
+```ocaml
+(* 计算图形面积的例子 *)
+# let area = function
+  | Point -> 0
+  | Circle r -> r * r * 3
+  | Rectangle (x, y) -> x * y
+  | Square x -> x * x;;
+val area : figure -> int = <fun>
+# area c;;
+- : int = 48
+```
+
