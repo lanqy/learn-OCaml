@@ -70,3 +70,34 @@
 - : int = 123
 ```
 
+### 元组
+
+* (类型名 * 类型名...)
+
+```ocaml
+# (1, 2);;
+- : int * int = (1, 2)
+# ('a', 1, "str", 4.3);;
+- : char * int * string * float = ('a', 1, "str", 4.3)
+# ((1, 2), ('a', "str"));;
+- : (int * int) * (char * string) = ((1, 2), ('a', "str"))
+```
+### 定义变量
+
+#### let 定义（let defenition）
+
+* let 变量名称 = 表达式
+
+```ocaml
+# let hoge = 1;;
+val hoge : int = 1
+```
+#### 可以同时定义
+
+* let 变量名称 = 表达式1 and 表达式2
+
+```ocaml
+# let a = 1 and b = 2;;
+val a : int = 1
+val b : int = 2
+```
