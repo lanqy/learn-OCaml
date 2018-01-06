@@ -101,3 +101,26 @@ val hoge : int = 1
 val a : int = 1
 val b : int = 2
 ```
+
+### 定义函数
+
+#### let 函数名 参数 = 表达式
+```ocaml
+# let twice s = s ^ s;; 
+val twice : string -> string = <fun>
+```
+* 包含参数（）是可选的。
+
+#### let 表达式（let expression）
+
+* 与 let 定义不同。
+* 用于在函数中定义临时变量（局部变量）的表达式。
+* let 变量名 = 表达式1 in 表达式2
+
+```ocaml
+# let four_times s =
+  let twice = s ^ s in
+  twice ^ twice;;
+val four_times : string -> string = <fun>
+```
+
