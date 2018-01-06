@@ -109,7 +109,7 @@ val b : int = 2
 # let twice s = s ^ s;; 
 val twice : string -> string = <fun>
 ```
-* 包含参数（）是可选的。
+包含参数（）是可选的。
 
 #### let 表达式（let expression）
 
