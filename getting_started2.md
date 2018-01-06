@@ -160,3 +160,45 @@ type student = { name : string; id : int; }
 # let s = {name = "hoge"; id = 1};;
 val s : student = {name = "hoge"; id = 1}
 ```
+
+### 记录转移
+
+创建一个新的记录值，而不是覆盖现有的值。
+
+{记录 with 字段名称 = 值; ...}
+
+```ocaml
+# let s2 = {s with name = "fuga"};;
+val s2 : student = {name = "fuga"; id = 1}
+```
+### 变体
+
+数据结构代表案例分类。 
+
+```ocaml
+type name =
+  | 构造函数 [ of <type> [* <type>]... ]
+  | 构造函数 [ of <type> [* <type>]... ]
+  | ...
+```
+* 构造函数以英文大写字母开头
+* of 是构造函数所需的参数类型
+* of int * int 参数不是一组int，两个int
+* of (int * int) 参数是一对int
+
+以下是四种数字的变体类型：
+
+```ocaml
+# type figure =
+  | Point
+  | Circle of int
+  | Rectangle of int * int (* 两个int类型的参数，不是元组 *)
+  | Square of int;;
+type figure = Point | Circle of int | Rectangle of int * int | Square of int
+
+# let c = Circle 4;;
+val c : figure = Circle 4
+# let figs = [Point; Rectangle (1, 1); c];;
+val figs : figure list = [Point; Rectangle (1, 1); Circle 4]
+```
+
