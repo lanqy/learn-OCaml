@@ -228,3 +228,26 @@ Error: The record field name is not mutable
 # ac;;
 - : account = {name = "Bob"; amount = 999}
 ```
+#### 创建引用（ ref ）
+
+* 创建引用 => ref函数
+
+* 引用获取 => !引用
+
+* 引用目标重写 => 引用 := 值
+```ocaml
+(* 创建引用 *)
+# let h = ref "Hoge" and f = ref "Fuga";;
+val h : string ref = {contents = "Hoge"}
+val f : string ref = {contents = "Fuga"}
+
+(* 引用获取 *)
+# let () = print_string (!h ^ !f ^ "\n");;
+HogeFuga
+
+(* 引用重写 *)
+# h := !f;;
+- : unit = ()
+# let () = print_string (!h ^ !f ^ "\n");;
+FugaFuga
+```
