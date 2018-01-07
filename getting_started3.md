@@ -251,3 +251,21 @@ HogeFuga
 # let () = print_string (!h ^ !f ^ "\n");;
 FugaFuga
 ```
+
+#### 引用的引用 ( ref ref )
+
+它也可以像C语言中的双指针一样
+```ocaml
+(* 创建引用 *)
+# let r1 = ref 5 and r2 = ref 2;;
+val r1 : int ref = {contents = 5}
+val r2 : int ref = {contents = 2}
+(* 引用的引用创建 *)
+# let rr1 = ref r1 and rr2 = ref r2;;
+val rr1 : int ref ref = {contents = {contents = 5}}
+val rr2 : int ref ref = {contents = {contents = 2}}
+(* 引用操作 *)
+# let () = !rr1 := !(!rr2);;
+# (!r1, !r2);;
+- : int * int = (2, 2)
+```
