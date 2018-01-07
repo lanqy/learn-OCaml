@@ -185,3 +185,25 @@ val t : AbstTypeInt.t = <abstr>
 Error: This expression has type AbstTypeInt.t
        but an expression was expected of type int
 ```
+
+### Functor
+
+通过应用参数动态生成参数的函数。
+
+消除了多次定义不同模块的麻烦。
+
+#### 使用 Functor
+
+##### Functor应用程序 => Functor名称（模块化）
+
+##### ※模块化功能应用程序本身
+
+#### 处理集合 Set 模块示例
+
+标准模块的 Set 和 Queue 使用 funcctor
+
+对于要处理的集合的元素，定义以下模块
+
+* 定义集合元素的模块
+
+##### ※模块化功能应用程序本身
