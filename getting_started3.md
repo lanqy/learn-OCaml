@@ -83,3 +83,86 @@ Exception: Hoge.
 # raise (Fuga "fuga!");;
 Exception: Fuga "fuga!".
 ```
+
+#### 关于exn类型
+
+既然exn也是一个变体类型，它也可以作为一个参数传递。
+
+```ocaml
+# exception Hoge;;
+exception Hoge
+
+(* exn 类型列表 *)
+# let exnlist = [Not_found; Hoge; (Invalid_argument "fuga")];;
+val exnlist : exn list = [Not_found; Hoge; Invalid_argument "fuga"]
+
+(* 接收exn类型的函数 *)
+# let f = function
+  | Hoge -> "hoge!"
+  | x -> raise x;;
+val f : exn -> string = <fun>
+# f Hoge;;
+- : string = "hoge!"
+# f Not_found;;
+Exception: Not_found.
+```
+### unit 类型
+
+输出字符串的程序。
+
+```ocaml
+# print_string "hoge\n";;
+hoge
+- : unit = ()
+```
+返回类型是 unit 类型
+
+unit 类型的值只是一个名为（）的常量，称为 unit 值。
+
+#### unit 类型的用法
+
+* （）上没有可以执行的操作
+* 用作返回值本身没有意义的函数的返回值
+* 在定义不需要有意义的参数的函数时用作参数
+
+```ocaml
+# let const () = 777;;
+val const : unit -> int = <fun>
+# const ();;
+- : int = 777
+```
+
+##### 用作判断操作是否成功的返回值
+
+```ocaml
+（*
+   () 将匹配模式，如果操作成功，将返回单位类型。
+   也就是说，如果匹配成功，则表示操作成功。
+*）
+# let () = Bytes.set "Test" 1 'C';;
+```
+
+### 可变的数据结构
+
+#### 修改字符串
+
+##### "string".[index] <- 'char'
+
+```ocaml
+# let s = "life";;
+val s : string = "life"
+# s.[2] <- 'v';;
+- : unit = ()
+# s;;
+- : string = "live"
+
+(* String.set 弃用 *)
+# let f2 = "hoge";;
+val f2 : string = "hoge"
+# Bytes.set f2 0 'H';;
+- : unit = ()
+# f2;;
+- : string = "Hoge"
+```
+
+
