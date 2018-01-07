@@ -200,10 +200,62 @@ Error: This expression has type AbstTypeInt.t
 
 #### 处理集合 Set 模块示例
 
-标准模块的 Set 和 Queue 使用 funcctor
+标准模块的 Set 和 Queue 使用 functor
 
 对于要处理的集合的元素，定义以下模块
 
 * 定义集合元素的模块
 
-##### ※模块化功能应用程序本身
+* 一个类型 t 表示一个集合的元素
+
+* 比较元素类型t的大小的函数：compare: t -> t -> int
+
+将上述“元素类型模块”应用于 functor ，生成“该类型为元素的模块”。
+
+```ocaml
+(* functor 应用 *)
+# module IntSet = Set.Make (struct
+    type t = int
+    let compare i j = i - j
+  end);;
+module IntSet :
+  sig
+    type elt = int (* 元素我想作为元素类型对待 elt = int *)
+    type t         (* 代表一个集合的类型是 IntSet.t 是一种抽象数据类型 *)
+    val empty : t
+    val is_empty : t -> bool
+    val mem : elt -> t -> bool
+    val add : elt -> t -> t
+    val singleton : elt -> t
+    val remove : elt -> t -> t
+    val union : t -> t -> t
+    val inter : t -> t -> t
+    val diff : t -> t -> t
+    val compare : t -> t -> int
+    val equal : t -> t -> bool
+    val subset : t -> t -> bool
+    val iter : (elt -> unit) -> t -> unit
+    val fold : (elt -> 'a -> 'a) -> t -> 'a -> 'a
+    val for_all : (elt -> bool) -> t -> bool
+    val exists : (elt -> bool) -> t -> bool
+    val filter : (elt -> bool) -> t -> t
+    val partition : (elt -> bool) -> t -> t * t
+    val cardinal : t -> int
+    val elements : t -> elt list
+    val min_elt : t -> elt
+    val max_elt : t -> elt
+    val choose : t -> elt
+    val split : elt -> t -> t * bool * t
+    val find : elt -> t -> elt
+    val of_list : elt list -> t
+  end
+
+(* 使用由 functor 生成的模块 *)
+# open IntSet;;
+# let s1 = add 2 (add 1 empty)
+  and s2 = add 1 (add 3 empty);;
+val s1 : IntSet.t = <abstr>
+val s2 : IntSet.t = <abstr>
+# mem 1 s1;;
+- : bool = true
+```
