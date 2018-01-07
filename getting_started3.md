@@ -165,4 +165,66 @@ val f2 : string = "hoge"
 - : string = "Hoge"
 ```
 
+##### 该操作操作参考目的地 
 
+```ocaml
+# let s = "hoge";;
+val s : string = "hoge"
+# let a = (s, s);;
+val a : string * string = ("hoge", "hoge")
+# Bytes.set s 3 'E';;
+- : unit = ()
+
+(* 两者都被改变，因为参考目标是相同的 *)
+# a;;
+- : string * string = ("hogE", "hogE")
+```
+
+#### 物理相等
+
+##### 物理相等 => 比较数据地址时的平等性
+
+* 使用 ==, !=
+
+##### 结构相等 => 平等作为价值进行比较
+
+* 使用=，<>
+
+```ocaml
+# let s1 = "hoge" and s2 = "hoge";;
+val s1 : string = "hoge"
+val s2 : string = "hoge"
+(* 结构相等 *)
+# s1 = s2;;
+- : bool = true
+(* 物理相等 *)
+# s1 == s2;;
+- : bool = false
+# s1 != s2;;
+- : bool = true
+```
+#### 可修改的记录
+
+* 修改记录 => 使用 mutable 关键字
+
+* 记录修改 => record.field <- 值
+
+```ocaml
+# type account = {name:string;mutable amount:int};;
+type account = { name : string; mutable amount : int; }
+# let ac = {name = "bob"; amount = 1000};;
+val ac : account = {name = "bob"; amount = 1000}
+# ac.amount <- 999;;
+- : unit = ()
+# ac;;
+- : account = {name = "bob"; amount = 999}
+
+(* 不可改变 *)
+# let () = ac.name <- "Hoge";;
+Error: The record field name is not mutable
+(* 这样是可以的 *)
+# ac.name.[0] <- 'B';;
+- : unit = ()
+# ac;;
+- : account = {name = "Bob"; amount = 999}
+```
