@@ -105,8 +105,8 @@ Hoge 模块的签名可以在 hoge.mli 文件中定义。
 
 ##### 签名定义
 
-定义 => module type 签名名 = sig ... end
-应用 => module 模块名 : 签名名 = 模块名或 struct ... end
+* 定义 => module type 签名名 = sig ... end
+* 应用 => module 模块名 : 签名名 = 模块名或 struct ... end
 
 ```ocaml
 (* message 元素可访问 *)
