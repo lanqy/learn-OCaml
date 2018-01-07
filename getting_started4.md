@@ -86,3 +86,59 @@ module Hello : sig val message : string val hello : unit -> unit end
 Hello
 - : unit = ()
 ```
+
+#### 签名
+
+##### 签名
+
+* sig ... end 周围的部分
+
+* 整个模块的类型（类似）
+
+* 表示模块的I / F（可以定义可访问模块的元素）
+
+#### mli文件
+
+Hoge 模块的签名可以在 hoge.mli 文件中定义。
+
+在文件中写一个签名
+
+##### 签名定义
+
+定义 => module type 签名名 = sig ... end
+应用 => module 模块名 : 签名名 = 模块名或 struct ... end
+
+```ocaml
+(* message 元素可访问 *)
+# Hello.message;;
+- : string = "Hello"
+
+(* message 定义未定义的签名 *)
+# module type Hello_Sig =
+    sig
+      val hello: unit -> unit
+    end;;
+module type Hello_Sig = sig val hello : unit -> unit end
+
+(* 给一个模块签名 *)
+# module Hello2 : Hello_Sig = Hello;;
+module Hello2 : Hello_Sig
+
+(* 因为它不是签名, message 元素不可访问 *)
+# Hello2.hello ();;
+Hello
+- : unit = ()
+# Hello2.message;;
+Error: Unbound value Hello2.message
+
+(* 直接定义模块 *)
+# module Hello3 : Hello_Sig = struct
+    let hello () = print_endline "Hello3!"
+  end;;
+module Hello3 : Hello_Sig
+# Hello3.hello ();;
+Hello3!
+- : unit = ()
+# Hello3.message;;
+Error: Unbound value Hello3.message
+```
