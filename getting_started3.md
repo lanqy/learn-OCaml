@@ -309,3 +309,60 @@ let _ = 表达式2 in
 你可以写 begin 表达式1; ...表达式n end ，而不是（表达式; ...表达式n）
 
 这似乎是首选。
+
+#### ignore
+
+如果相当于一个句子的表达式返回非 unit 类型，则会出现警告
+
+忽略警告的函数 
+
+```ocaml
+(* 将返回值设置为0（int） *)
+# let print_hello () = print_string "Hello, "; 0;;
+val print_hello : unit -> int = <fun>
+
+(* 警告出现在 print_hello *)
+# print_hello (); print_string "World\n";;
+Warning 10: this expression should have type unit.
+Hello, World
+- : unit = ()
+
+(* 忽略不发出警告 *)
+# ignore (print_hello ()); print_string "World\n";;
+Hello, World
+- : unit = ()
+```
+;是一个分隔符
+
+;不是终止符，它被用作分隔符。
+
+因此，要小心如果在表达式n的末尾添加一个分号作为表达式n，经常会出现额外的错误。
+
+#### 条件语句
+
+if then 的 then 子句的返回值是（），则else可以省略。
+
+if 表达式1 then 表达式2 => if 表达式1 then 表达式2 else（）
+
+这意味着如果表达式1不成立，将会做任何事情。
+
+#### 循环语句
+
+for 和 while 语句
+
+##### for 
+
+for => for variable = start_value to end_value do 表达式 done
+
+或
+
+for variable = start_value downto end_value do 表达式 done
+
+```ocaml
+(* for 循环 *)
+# for i = 1 to 10 do begin print_int i; () end done;;
+12345678910- : unit = ()
+# for i = 10 downto 1 do begin print_int i; () end done;;
+10987654321- : unit = ()
+```
+
