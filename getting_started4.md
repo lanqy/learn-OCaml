@@ -142,3 +142,46 @@ Hello3!
 # Hello3.message;;
 Error: Unbound value Hello3.message
 ```
+#### 抽象数据类型
+
+在签名定义中，省略 = ...用于类型定义（typ t = ...）
+
+您可以隐藏定义的详细信息。
+
+通过隐藏类型信息和实现，可以将该类型的操作限制为通过模块进行的操作。
+
+防止意外操作。
+
+```ocaml
+(* 签名定义 *)
+# module type AbstTypeSig = sig
+    type t (* 抽象数据类型 *)
+    val get_t : int -> t
+    val print : t -> unit
+  end;;
+module type AbstTypeSig =
+  sig type t val get_t : int -> t val print : t -> unit end
+
+(* 模块定义 *)
+# module AbstTypeInt : AbstTypeSig = struct
+    type t = int
+    let get_t i = i
+    let print t = print_int t
+  end;;
+module AbstTypeInt : AbstTypeSig
+
+(* 如果返回值是一个抽象数据类型 <abstr> *)
+# let t = AbstTypeInt.get_t 0;;
+val t : AbstTypeInt.t = <abstr>
+# AbstTypeInt.print t;;
+0- : unit = ()
+
+(* 
+  抽象数据类型不能在外部处理
+  AbstTypeInt.t 是一个真正的int，但是因为它隐藏着一个抽象的数据类型
+  print_int 即使是作为参数引用
+*)
+# let () = print_int t;;
+Error: This expression has type AbstTypeInt.t
+       but an expression was expected of type int
+```
