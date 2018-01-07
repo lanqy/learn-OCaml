@@ -366,3 +366,21 @@ for variable = start_value downto end_value do 表达式 done
 10987654321- : unit = ()
 ```
 
+##### while
+
+while 条件 do 表达式 done
+
+while据说它用得不多。
+
+```ocaml
+let quit_loop = ref false in
+  while not !quit_loop do
+  print_string "Have you had enough yet? (y/n) ";
+  let str = read_line () in
+  if str.[0] = 'y' then
+      quit_loop := true
+  done;;
+Have you had enough yet? (y/n) n
+Have you had enough yet? (y/n) y
+- : unit = ()
+```
