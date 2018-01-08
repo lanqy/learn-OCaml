@@ -373,3 +373,61 @@ module MakeSet :
       val elements : t -> elt list
     end
 ```
+
+比较上述函数应用方程的返回值签名公式
+
+* before
+
+```ocaml
+# module StringSet = MakeSet(String);;
+module StringSet :
+  sig
+    type elt = String.t
+    type t = elt list
+    val empty : 'a list
+    val mem : String.t -> String.t list -> bool
+    val add : String.t -> String.t list -> String.t list
+    val elements : 'a -> 'a
+  end
+```
+* After
+
+```ocaml
+# module IntSet = MakeSet(struct
+    type t = int
+    let compare i j = i - j
+  end);;
+module IntSet :
+  sig
+    type elt = int
+    type t (* 抽象数据类型 *)
+    val empty : t
+    val mem : elt -> t -> bool
+    val add : elt -> t -> t
+    val elements : t -> elt list
+  end
+
+# Open IntSet;;
+# let s1 = add 1 (add 2 empty)
+  and s2 = add 3 (add 4 empty);;
+val s1 : IntSet.t = <abstr> (* 抽象数据类型 *)
+val s2 : IntSet.t = <abstr>
+
+(* 当它是一个字符串 *)
+# module StringSet = MakeSet(String);;
+module StringSet :
+  sig
+    type elt = String.t
+    type t = MakeSet(String).t (* 有隐藏的实现吗？ *)
+    val empty : t
+    val mem : elt -> t -> bool
+    val add : elt -> t -> t
+    val elements : t -> elt list
+  end
+
+# open StringSet;;
+# let s1 = add "a" (add "b" empty)
+  and s2 = add "c" (add "d" empty);;
+val s1 : StringSet.t = <abstr> (* 这是一个抽象的数据类型 *)
+val s2 : StringSet.t = <abstr>
+```
