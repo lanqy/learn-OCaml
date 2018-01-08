@@ -298,3 +298,9 @@ module MakeSet (Element : ELEMENT) =
     let rec elements s = s
   end;;
 ```
+
+#### 相关类型
+
+* 上述 functor 的返回值的签名如下
+ - functor (Element : ELEMENT) -> の記述移行の sig ... end の中を見ると
+ 
