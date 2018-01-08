@@ -259,3 +259,42 @@ val s2 : IntSet.t = <abstr>
 # mem 1 s1;;
 - : bool = true
 ```
+
+#### Functor 的定义
+
+##### module functor名称（参数名称：签名表达式）= 模块化表达式
+
+以下糖衣语法
+
+##### module functor名称 = functor（参数名称：签名表达式） -> 模块化表达式
+
+定义 Set.Make 的一个简单 functor 的例子
+
+```ocaml
+(* 签名定义 *)
+module type ELEMENT = sig
+  type t
+  val compare: t -> t -> int
+end
+
+(* functor 定义 *)
+module MakeSet (Element : ELEMENT) =
+  struct
+    type elt = Element.t
+    type t = elt list
+
+    let empty = []
+
+    let mem x set = List.exists (fun y -> Element.compare x y = 0) set
+
+    let rec add elt = function
+    | [] -> [elt]
+    | (x :: rest as s) ->
+        match Element.compare elt x with
+        | 0 -> s
+        | r when r < 0 -> elt :: s
+        | _ -> x :: (add elt rest)
+
+    let rec elements s = s
+  end;;
+```
