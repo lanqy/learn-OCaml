@@ -321,3 +321,55 @@ module MakeSet :
       val elements : 'a -> 'a
     end
 ```
+
+#### functor 的信息隐藏
+
+像普通模块一样，您可以限制函数返回值的签名并隐藏内部实现。
+
+##### module functor名称（参数名称：输入签名表达式）：签名表达式返回 = 模块表达式
+
+通过指定要返回的签名表达式可以隐藏信息
+
+```ocaml
+module MakeSet (Element : ELEMENT) :
+  (* 签名表达式返回 *)
+  sig
+    type elt = Element.t
+    type t (* 抽象数据类型 *)
+    val mem : elt -> t -> bool
+    val add : elt -> t -> t
+    val elements : t -> elt list
+  end
+  =
+  (* 模块化 *)
+  struct
+    type elt = Element.t
+    type t = elt list
+
+    let empty = []
+
+    let mem x set = List.exists (fun y -> Element.compare x y = 0) set
+
+    let rec add elt = function
+    | [] -> [elt]
+    | (x :: rest as s) ->
+        match Element.compare elt x with
+        | 0 -> s
+        | r when r < 0 -> elt :: s
+        | _ -> x :: (add elt rest)
+
+    let rec elements s = s
+  end;;
+
+(* functor 表达式的返回值 *)
+module MakeSet :
+  functor (Element : ELEMENT) ->
+    sig
+      type elt = Element.t
+      type t
+      val empty : t
+      val mem : elt -> t -> bool
+      val add : elt -> t -> t
+      val elements : t -> elt list
+    end
+```
