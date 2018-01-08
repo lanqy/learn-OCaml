@@ -299,8 +299,25 @@ module MakeSet (Element : ELEMENT) =
   end;;
 ```
 
-#### 相关类型
+#### 依赖类型
 
 * 上述 functor 的返回值的签名如下
- - functor (Element : ELEMENT) -> の記述移行の sig ... end の中を見ると
- 
+* Functor（Element：ELEMENT） -> 转换的描述在 sig ... end 中查看
+* type elt = Element.t 被写入正式参数的值包含在返回类型中
+* 换句话说，返回值的类型根据给定的参数值（！= Type）而变化，
+* 这被称为依赖类型
+
+```ocaml
+(* 返回顶层的值 *)
+module type ELEMENT = sig type t val compare : t -> t -> int end
+module MakeSet :
+  functor (Element : ELEMENT) ->
+    sig
+      type elt = Element.t
+      type t = elt list
+      val empty : 'a list
+      val mem : Element.t -> Element.t list -> bool
+      val add : Element.t -> Element.t list -> Element.t list
+      val elements : 'a -> 'a
+    end
+```
