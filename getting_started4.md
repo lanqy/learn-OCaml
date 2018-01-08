@@ -431,3 +431,99 @@ module StringSet :
 val s1 : StringSet.t = <abstr> (* 这是一个抽象的数据类型 *)
 val s2 : StringSet.t = <abstr>
 ```
+
+#### 签名的分解和定义（ with type ）
+
+签名表达式 with type 类型名 = 类型定义 and type ...
+
+不要指定你希望 functor 直接用 sig ... end 返回的签名定义，而是要给它定义名称。
+
+type elt = Element.t 部分
+
+签名不能被定义为别名，因为它取决于伪参数名称
+
+```ocaml
+module MakeSet (Element : ELEMENT) :
+  (* 签名表达式返回 *)
+  sig
+    type elt = Element.t
+    type t (* 抽象数据类型 *)
+  end
+  =
+  struct ... end;;
+```
+
+#### with type 语法使用
+
+```ocaml
+(* with type 类型定义替换 elt *)
+# module type ElementWithType =
+    sig
+      type elt
+      type t
+      val empty : t
+      val mem : elt -> t -> bool
+      val add : elt -> t -> t
+      val elements : t -> elt list
+    end;;
+
+(* with type 定义 *)
+# module type E2 = ElementWithType with type elt = int;;
+module type E2 =
+  sig
+    type elt = int
+    type t
+    val empty : t
+    val mem : elt -> t -> bool
+    val add : elt -> t -> t
+    val elements : t -> elt list
+  end
+```
+
+### 批处理编译器和拆分编译
+
+编译器通过file => 批量编译器导出
+
+以文件为单位创建一个目标文件Link => 分割编译
+
+ocaml 的批处理编译器 => ocamlc（bytecode），ocamlopt（本地代码）
+
+#### 统一编译
+
+```ocaml
+$ ocamlc -o output.name src1.ml src2.ml ...
+```
+
+#### 拆分编译
+
+* 需要安排最后一个链接的 cmo 文件，以便名称解析成为可能
+* 非标准库
+* 链接时有必要明确指出文件名
+* nums.cma 等
+* -c 选项输出目标文件而不链接
+* -I 允许您指定包含 cmi，cmo 的目录
+
+```ocaml
+$ ocamlc -c mod1.ml
+$ ocamlc -c mod2.ml
+$ ocamlc -o output.name nums.cma mod1.cmo mod2.cmo
+```
+
+#### mli文件 
+
+mli 文件描述了相应的 .ml 签名
+
+在编译时使用 ocamlc
+
+用 ocamlc 编译 mli 文件
+
+用 ocamlc -c编译ml文件
+
+链接 cmo 与 ocamlc
+
+```ocaml
+$ ocamlc mod.mli  # -c 没有选项要求
+$ ocamlc -c mod.ml
+$ ocamlc -c mod2.ml
+$ ocamlc -o a.out mod.cmo mod2.cmo
+```
