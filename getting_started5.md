@@ -37,3 +37,20 @@ class point :
     method set : int -> int -> unit
   end
 ```
+#### 实例生成
+
+new 类名称
+
+```ocaml
+# let p = new point;;
+val p : point = <obj>
+```
+
+#### 调用实例方法
+
+实例#方法名称
+
+```ocaml
+# p#set 1 2;;
+- : unit = ()
+```
