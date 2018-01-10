@@ -112,3 +112,34 @@ val obj : < set : int -> int -> unit > = <obj>
 # obj#set 1 2;;
 - : unit = ()
 ```
+
+#### 上面的 obj 类型是 < set : int -> int -> unit >
+
+换句话说，这意味着有一个方法设置int - > int - > unit。
+
+具有满足这个定义的方法的类被认为是相同的对象类型。
+
+```ocaml
+(* 定义上面与obj无关的类 *)
+# class unrelated_class =
+    object
+      (* 定义一个显示x，y的方法集 *)
+      method set x y = Printf.printf "(%d, %d)\n" x y
+    end;;
+class unrelated_class : object method set : int -> int -> unit end
+
+(* 由于对象类型匹配，它们被放在同一个列表中 *)
+# let obj2 = new unrelated_class;;
+val obj2 : unrelated_class = <obj>
+# [obj; obj2];;
+- : unrelated_class list = [<obj>; <obj>]
+
+(* 由于对象类型匹配，可以将其作为相同的返回值类型进行处理 *)
+# let hoge x = if x then obj else new unrelated_class;;
+val hoge : bool -> unrelated_class = <fun>
+# (hoge true)#set 1 2;;
+- : unit = ()
+# (hoge false)#set 1 2;;
+(1, 2)
+- : unit = ()
+```
