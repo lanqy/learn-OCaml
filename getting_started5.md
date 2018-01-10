@@ -86,3 +86,29 @@ val p : point_with_print = <obj>
 (1, 1)
 - : unit = ()
 ```
+
+#### 类类型
+
+##### <方法名称：类型 ...>
+
+* 对象的类型是方法类型的顺序
+
+* 如果方法名称和类型的组合匹配，则认为是相同的对象类型
+
+* 要检查一个类的类型，直接使用 let 定义对象而不使用 class。
+
+```ocaml
+(* 直接定义对象 *)
+let obj = 
+  object (self)
+    val mutable x = 0
+    val mutable y = 0
+    method set new_x new_y = begin x <- new_x; y <- new_y end
+  end;;
+
+(* 显示类型 *)
+val obj : < set : int -> int -> unit > = <obj>
+(* 尝试调用实例方法 *)
+# obj#set 1 2;;
+- : unit = ()
+```
