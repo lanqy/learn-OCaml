@@ -54,3 +54,35 @@ val p : point = <obj>
 # p#set 1 2;;
 - : unit = ()
 ```
+
+#### 継承
+
+inherit 类名
+
+以下类可以由 self 本身通过 super 访问父类。
+
+```ocaml
+(* 打印坐标 *)
+# class point_with_print x y =
+    object (self)
+      inherit point x y as super (* 访问父类的名称 *)
+      method print = Printf.printf "(%d, %d)\n" x y
+    end;;
+class point_with_print :
+  int ->
+  int ->
+  object
+    val mutable x : int
+    val mutable y : int
+    method print : unit
+    method private print_x : unit
+    method set : int -> int -> unit
+  end
+
+(* 生成继承类的实例 *)
+# let p = new point_with_print 1 1;;
+val p : point_with_print = <obj>
+# p#print;;
+(1, 1)
+- : unit = ()
+```
