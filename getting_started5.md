@@ -195,3 +195,26 @@ val obj2 : print_class1 = <obj>
 Error: This expression has type print_class1
        It has no method print_2
 ```
+
+#### 多层对象类型
+
+表示满足部分类型的任意类型
+
+* <方法名称1：类型1; ...，方法名称n：类型n; ..>
+
+ * 最后一个“..”是重要的
+
+ * 换句话说，它表示“各种其他”
+ 
+ ```ocaml
+ 
+ (* 定义接受多层对象类型的函数 *)
+# let print1 print_obj = print_obj#print_1;;
+val print1 : < print_1 : 'a; .. > -> 'a = <fun>
+
+(* 您可以接收满足部分类型的对象类型 *)
+# print1 obj1;;
+1- : unit = ()
+# print1 obj2;;
+1- : unit = ()
+```
