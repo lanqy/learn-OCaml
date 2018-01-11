@@ -155,3 +155,43 @@ val hoge : bool -> unrelated_class = <fun>
 * 类型1 => <方法1：int - > int，方法2：unit>
 
 * 类型2 => <method1：int - > int>
+
+#### CORATION（类型转换）
+
+（表达式：类型1：>类型2）
+
+将部分类型1转换为类型2。 它接近于Java中的上传。
+
+```ocaml
+(* print_class1 是 print_class2 的部分类型 *)
+# class print_class1 = object
+    method print_1 = print_int 1
+  end;;
+class print_class1 : object method print_1 : unit end
+# class print_class2 = object
+    method print_1 = print_int 1
+    method print_2 = print_int 2
+  end;;
+class print_class2 : object method print_1 : unit method print_2 : unit end
+
+(* 由于对象类型不同，print_class 1和print_class 2不在同一个列表中 *)
+# let obj_list = [new print_class1; new print_class2];;
+Error: This expression has type print_class2
+       but an expression was expected of type print_class1
+       The second object type has no method print_2
+
+(* 通过指导（类型转换）把它们放在同一个列表中 *)
+# let obj_list = [new print_class1; (new print_class2 :> print_class1)];;
+val obj_list : print_class1 list = [<obj>; <obj>]
+
+(* コアーションによって削ぎ落とされた情報は呼び出せない *)
+# let [obj1; obj2] = obj_list;;
+val obj1 : print_class1 = <obj>
+val obj2 : print_class1 = <obj>
+
+# obj1#print_1;; (* 可以调用 *)
+1- : unit = ()
+# obj2#print_2;; (* 不能被调用 *)
+Error: This expression has type print_class1
+       It has no method print_2
+```
