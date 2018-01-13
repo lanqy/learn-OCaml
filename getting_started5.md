@@ -312,7 +312,7 @@ class print_hoge : object method print : unit end
 ```
  class virtual
 
-#### 多阶段（泛型）
+#### 多阶段类（泛型）
 
 * 定义用类型参数化的对象类。
 
@@ -348,4 +348,19 @@ class ['a] stack :
     method push : 'a -> unit
     method size : int
   end
+```
+
+使用多阶段类 
+
+```ocaml
+(* 生成堆栈的一个实例 *)
+# let s = new stack;;
+(* 用非约束状态的类型变量生成实例 *)
+val s : '_a stack = <obj>
+(* 添加一个浮点数 *)
+# s#push 1.0;;
+- : unit = ()
+(* 类型变量 '_a 被绑定为浮点数 *)
+# s;;
+- : float stack = <obj>
 ```
