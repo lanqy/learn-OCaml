@@ -218,3 +218,134 @@ val print1 : < print_1 : 'a; .. > -> 'a = <fun>
 # print1 obj2;;
 1- : unit = ()
 ```
+
+以上 < print_1 : 'a; .. > -> 'a = <fun> 中的 -> 'a 部分 'a 是一个类型变量 < print_1 : 'a; .. > 的别名
+
+#### 关于多层次对象类型的参数类型的变化
+
+如果你给一个多层次的类型的参数
+
+```ocaml
+(* 定义多层函数 *)
+# let k1 a b = a and k2 a b = b;;
+val k1 : 'a -> 'b -> 'a = <fun>
+val k2 : 'a -> 'b -> 'b = <fun>
+
+(* 请求相同类型的函数的返回值会更改该类型。 *)
+# let f b = if b then k1 else k2;;
+（*'a - >'b - >'a /'b 的类型是 'a - >'a - >'a *）
+val f : bool -> 'a -> 'a -> 'a = <fun>
+```
+
+当给出一个不是多层的类型的参数时
+
+```ocaml
+(* 不同类型的函数 *)
+# let k1' (a:int) (b:string) = a and k2' (a:int) (b:string) = b;;
+val k1' : int -> string -> int = <fun>
+val k2' : int -> string -> string = <fun>
+
+（*
+  *由于返回值的函数类型不同，因此不能作为返回值使用
+  *统一的类型不能完成
+ *）
+# let f' b = if b then k1' else k2';;
+Error: This expression has type int -> string -> string
+       but an expression was expected of type int -> string -> int
+       Type string is not compatible with type int
+```
+
+给定一个多层对象类型
+
+```ocaml
+(* 多定义分层对象类型的函数 *)
+# let print1' obj = obj#print_1 and print2' obj = obj#print_2;;
+val print1' : < print_1 : 'a; .. > -> 'a = <fun>
+val print2' : < print_2 : 'a; .. > -> 'a = <fun>
+
+(* 当组合两个分层对象类型函数时 *)
+# let f b = if b then print1' else print2';;
+(*
+ * 函数的返回值的类型为 < print_1 : 'a; print_2 : 'a; .. >
+ * 换句话说，诸如合成每个多层对象类型的类型变成了
+ *)
+val f : bool -> < print_1 : 'a; print_2 : 'a; .. > -> 'a = <fun>
+
+(* 函数调用 *)
+# let a = f true;;
+val a : < print_1 : '_a; print_2 : '_a; _.. > -> '_a = <fun>
+(* print_2 因为它没有类型错误 *)
+# a new print_class1;;
+Error: This expression has type print_class1
+       but an expression was expected of type print_class2
+       The first object type has no method print_2
+(* OK, 因为它满足对象类型 *)
+# a new print_class2;;
+1- : unit = ()
+```
+#### 抽象方法·抽象类
+
+* 定义假定稍后继承
+
+* 抽象方法=>具有空定义的方法
+
+* method virtual 方法 : 类型
+
+* 抽象类=>抽象方法的类定义
+
+```ocaml
+
+(* 抽象类的定义 *)
+# class virtual abstruct_print =
+    object (self)
+      method virtual print : unit (* 抽象方法 *)
+    end;;
+class virtual abstruct_print : object method virtual print : unit end
+
+(* 继承抽象类 *)
+# class print_hoge =
+    object (self)
+      inherit abstruct_print
+      method print = Printf.printf "hoge!\n"
+    end;;
+class print_hoge : object method print : unit end
+```
+ class virtual
+
+#### 多阶段（泛型）
+
+* 定义用类型参数化的对象类。
+
+* 类定义=>定义一个同名的对象类型，而不仅仅是类
+
+* 类型变量的声明是定义多层定义中的类类型所必需的
+
+* 显式声明类型变量
+
+* 请参阅中定义的类型变量
+
+#### class [类型变量, ...] 类名称 object ... end
+
+定义一个可以填充任何类型值的堆栈（从官方网站引用）
+
+```ocaml
+# class ['a] stack =
+    object (self)
+      val mutable list = ( [] : 'a list )  (* 实例变量 *)
+      method push x = list <- x :: list    (* 推入堆栈 *)
+      method pop =                         (* 从堆栈中移除(pop) *)
+        let result = List.hd list in
+        list <- List.tl list;
+        result
+      method peek = List.hd list     (* 堆栈峰值 *)
+      method size = List.length list (* 堆栈的大小 *)
+    end;;
+class ['a] stack :
+  object
+    val mutable list : 'a list
+    method peek : 'a
+    method pop : 'a
+    method push : 'a -> unit
+    method size : int
+  end
+```
