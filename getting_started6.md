@@ -39,7 +39,7 @@ val range : first:int -> last:int -> int list = <fun>
 
 * 〜hoge：○○ ○○ 是可选的
 
-```ocmal
+```ocaml
 # let rec range ~first ~last = 
   if first > last then []
   else first :: range (first + 1) last;;
@@ -52,7 +52,7 @@ val range : first:int -> last:int -> int list = <fun>
 
 与Python的家伙相同的功能。
 
-```ocmal
+```ocaml
 (* 默认值1给出步骤值 *)
 
 # let rec range ?(step = 1) a b = 
