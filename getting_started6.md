@@ -1,3 +1,5 @@
+## OCaml简介第6部分
+
 
 ### 标记的参数
 #### 〜标签名称：
@@ -33,5 +35,44 @@ val range : first:int -> last:int -> int list = <fun>
 
 # range 10 1;;
 - : int list = []
+```
 
+* 〜hoge：○○ ○○ 是可选的
+
+```ocmal
+# let rec range ~first ~last = 
+  if first > last then []
+  else first :: range (first + 1) last;;
+val range : first:int -> last:int -> int list = <fun>
+```
+
+#### 可选参数
+
+?标签名称：（pattern =表达式）
+
+与Python的家伙相同的功能。
+
+```ocmal
+(* 默认值1给出步骤值 *)
+
+# let rec range ?(step = 1) a b = 
+  if a > b then []
+  else a :: range ~step (a + step) b;;
+val range : ?step:int -> int -> int -> int list = <fun>
+
+(* 函数应用 *)
+# range 1 10;;
+
+- : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+
+(* 因为它在调用时指定了标签 *)
+
+# range 1 10 ~step:2;;
+- : int list = [1; 3; 5; 7; 9]
+# range 1 ~step:3 10;;
+- : int list = [1; 4; 7; 10]
+
+# range 2 1 10;;
+Error: The function applied to this argument has type ?step:int -> int list
+This argument cannot be applied without label
 ```
