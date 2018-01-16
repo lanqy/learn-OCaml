@@ -216,3 +216,29 @@ Error: This expression has type type_B but an expression was expected of type
          [< `Fuga | `Hoge ]
        The second variant type does not allow tag(s) `Piyo
 ```
+
+#### 多态变体类型的定义
+
+[> ..] [<..] 无法使用的模式
+
+type hoge = [`Hoge |`Fuga |...]
+
+声明一个类型变量 [> ..] 和 [<..] 定义一个模式
+
+type 'a hoge = [> `Hoge ...] as' a
+
+```ocaml
+# type hoge = [`Hoge | `Fuga];;
+type hoge = [ `Fuga | `Hoge ]
+
+# type 'a hoge = [> `Hoge] as 'a;;
+type 'a hoge = 'a constraint 'a = [> `Hoge ]
+
+# type 'a hoge = [< `Hoge] as 'a;;
+type 'a hoge = 'a constraint 'a = [< `Hoge ]
+
+(* 类型定义可以重用 *)
+# type hoge' = [hoge | `Piyo];;
+type hoge' = [ `Fuga | `Hoge | `Piyo ]
+```
+
