@@ -82,7 +82,7 @@ This argument cannot be applied without label
 
 如果选项参数在函数的结尾，则它变成了不能省略的选项参数，所以没有任何意义。
 
-```ocmal
+```ocaml
 (**
  * 我想定义一个函数，返回常量1 ....。
  * 如果选项参数在最后，我会收到警告
@@ -132,4 +132,35 @@ val range : ?step:int -> int -> int -> int list = <fun>
 
 # range 1 10;;
 - : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+```
+
+#### 多态变种
+
+##### `Constructor
+
+一种机制，可以为多种变体类型使用通用的构造函数。
+
+消除 “1构造函数<=> 1变体” 的限制。
+
+```ocaml
+# `Hoge;;
+- : [> `Hoge ] = `Hoge
+# `Hoge 2;;
+- : [> `Hoge of int ] = `Hoge 2
+# `Hoge `Fuga;;
+- : [> `Hoge of [> `Fuga ] ] = `Hoge `Fuga
+```
+
+#### 函数返回多态变种
+
+```ocaml
+# let f b = if b then `Hoge else `Fuga;;
+val f : bool -> [> `Fuga | `Hoge ] = <fun>
+```
+```ocaml
+# let hoge = function
+  | `Hoge -> "hoge"
+  | `Fuga -> "fuga"
+  | `Piyo -> "piyo";;
+val hoge : [< `Fuga | `Hoge | `Piyo ] -> string = <fun>
 ```
