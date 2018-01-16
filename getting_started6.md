@@ -184,3 +184,35 @@ val a : [> `Fuga | `Piyo ] list = [`Fuga; `Piyo]
 # a @ [`Asdf];;
 - : [> `Asdf | `Fuga | `Piyo ] list = [`Fuga; `Piyo; `Asdf]
 ```
+
+在 [<...] 中
+
+[< 可以被解释为“在所包含的多相变体类型中”。
+
+```ocaml
+(* `Hoge,`within Fuga *)
+# let f = function
+  | `Hoge -> "hoge"
+  | `Fuga -> "fuga";;
+val f : [< `Fuga | `Hoge ] -> string = <fun>
+
+(* `Hoge, type within Fuga *)
+# type type_A = [`Hoge | `Fuga];;
+type type_A = [ `Fuga | `Hoge ]
+# let a:type_A = `Hoge;;
+val a : type_A = `Hoge
+# f a;;
+- : string = "hoge"
+
+(* `Hoge,`Fuga or more types *)
+# type type_B = [`Hoge | `Fuga | `Piyo];;
+type type_B = [ `Fuga | `Hoge | `Piyo ]
+
+(* `I'm Hoge type_B is `Hoge, `Fuga or more types *)
+# let b:type_B = `Hoge;;
+val b : type_B = `Hoge
+# f b;; (* type error　*)
+Error: This expression has type type_B but an expression was expected of type
+         [< `Fuga | `Hoge ]
+       The second variant type does not allow tag(s) `Piyo
+```
