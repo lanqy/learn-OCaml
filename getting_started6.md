@@ -242,3 +242,4 @@ type 'a hoge = 'a constraint 'a = [< `Hoge ]
 type hoge' = [ `Fuga | `Hoge | `Piyo ]
 ```
 
+#### 递归定义多相变量
