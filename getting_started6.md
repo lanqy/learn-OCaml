@@ -164,3 +164,23 @@ val f : bool -> [> `Fuga | `Hoge ] = <fun>
   | `Piyo -> "piyo";;
 val hoge : [< `Fuga | `Hoge | `Piyo ] -> string = <fun>
 ```
+
+#### 多态变种的类型方案
+
+[> ...] , [<...] 是类型方案 (同 `a)
+
+[> ..] 和 [< ..] 它被视为有限制的类型变量。
+
+在 [> ...] 的情况下
+[> 可以解释为 “包含多态变种” 或更高。
+
+```ocaml
+(* 
+ * 可以接受任何东西的多相变体列表
+ *)
+# let  a : [>] list = [`Fuga; `Piyo];;
+val a : [> `Fuga | `Piyo ] list = [`Fuga; `Piyo]
+
+# a @ [`Asdf];;
+- : [> `Asdf | `Fuga | `Piyo ] list = [`Fuga; `Piyo; `Asdf]
+```
