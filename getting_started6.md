@@ -243,3 +243,21 @@ type hoge' = [ `Fuga | `Hoge | `Piyo ]
 ```
 
 #### 递归定义多相变量
+
+##### type 'a mylist = Nil | Cons of 'a * 'a mylist 我们将其定义为多相变量
+
+* 首先按顺序定义它，并检查Valiant类型发生了什么
+
+```ocaml
+（*通过定义来查看价格类型的变化*）
+# let l1 = `Nil;;
+val l1 : [> `Nil ] = `Nil
+# let l2 = `Cons(1, `Nil);;
+val l2 : [> `Cons of int * [> `Nil ] ] = `Cons (1, `Nil)
+
+（*你不能获得泛型类型定义*）
+# let l3 = `Cons(2, `Cons(1, `Nil));;
+val l3 : [> `Cons of int * [> `Cons of int * [> `Nil ] ] ] =
+  `Cons (2, `Cons (1, `Nil))
+```
+
