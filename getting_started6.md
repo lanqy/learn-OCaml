@@ -261,3 +261,31 @@ val l3 : [> `Cons of int * [> `Cons of int * [> `Nil ] ] ] =
   `Cons (2, `Cons (1, `Nil))
 ```
 
+* 如果你写一个执行任意列表处理的函数，你应该能够获得列表的通用术语类型定义...
+
+```ocaml
+(* 递归Variant类型的类型定义是...？ *)
+# let rec length = function
+  | `Nil -> 0
+  | `Cons (a, l) -> 1 + length l;;
+(*
+* [...]因为'a已被赋予变体类型定义的别名
+*这个别名'a出现在[...]中，原来是一个递归的定义
+*'由b给出的类型变量是一个也可以看出哪个是固定的类型
+*)
+
+val length : ([< `Cons of 'b * 'a | `Nil ] as 'a) -> int = <fun>
+```
+
+```ocaml
+(* 函数在列表中选择*的最大值 *)
+# let rec max_list = function
+  | `Cons(x, `Nil) -> x
+  | `Cons(x, `Cons(y, l)) ->
+    if x < y then max_list (`Cons(y, l)) else max_list (`Cons(x, l));;
+
+(*
+* [.. [..]] 是因为它的形式，可以看出长度大于或等于1
+*)
+val max_list : [ `Cons of 'a * ([< `Cons of 'a * 'b | `Nil ] as 'b) ] -> 'a = <fun>
+```
