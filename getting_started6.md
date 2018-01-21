@@ -289,3 +289,42 @@ val length : ([< `Cons of 'b * 'a | `Nil ] as 'a) -> int = <fun>
 *)
 val max_list : [ `Cons of 'a * ([< `Cons of 'a * 'b | `Nil ] as 'b) ] -> 'a = <fun>
 ```
+
+#### 注意多相变异型
+
+##### 注意 "&"
+
+如果多态变体＆出来，它表明，它输入失败
+
+例如，int＆float指示表示int和float，不能实现
+
+那么，在这种情况下，您应该查看函数定义等
+
+```ocaml
+# let f = function `A x -> x+1 | `B -> 2;;
+val f : [< `A of int | `B ] -> int = <fun>
+# let g = function `A x -> int_of_float x+1 | `B -> 2;;
+val g : [< `A of float | `B ] -> int = <fun>
+
+(*
+*返回不正确的类型[int＆float]
+* hoge＆fuga是一个不可行的类型，所以下面的类型定义是真实的[<`B] - > Int
+*)
+
+# let f_or_g b = if b then f else g;;
+val f_or_g : bool -> [< `A of int & float | `B ] -> int = <fun>
+```
+
+#### 使用点
+
+练习多相变量的正确使用所必需的。
+
+在很多情况下，应该使用正常的变体来完成。
+
+#### 奖励：你有多态记录吗？
+
+如果有多相变量，是否还有多态记录（如``hoge：int'）？ 我想，但没有这样的事情。
+
+相反，OCaml对象可以提供等效的功能。
+
+然而，对象没有模式匹配，所以说它用得不多。
