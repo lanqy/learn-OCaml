@@ -145,7 +145,7 @@ match exp with
 ```ocaml
 match exp with 
 | 0 -> 0 
-| v -> 1 (* w被警告为未使用的变量，因为 v 未使用 *) 
+| v -> 1 (* w 被警告为未使用的变量，因为 v 未使用 *) 
 
 match exp with 
 | 0 -> 0 
