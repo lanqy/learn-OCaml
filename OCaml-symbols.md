@@ -6,7 +6,7 @@
 - 标识注释，例如：
  
 ```ocaml
- (** Bump the frequency count for the given string. *)
+ (** 撞击给定字符串的频率计数. *)
 val touch : (string * int) list -> string -> (string * int) list
 ```
 
@@ -75,4 +75,14 @@ match v with
 | Baz -> ...
 ```
 
+### 10、 ``` -> ```
 
+- 它用于模式匹配守卫或类型的符号。例如：``` String.get ``` 获取字符串中特定位置的字符的函数类型是 ``` string -> int -> char ```
+
+```ocaml
+(* 模式匹配 *) 
+match v with 
+| Foo -> ... 
+| Bar -> ... 
+| Baz -> ...
+```
