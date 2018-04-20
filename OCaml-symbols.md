@@ -242,3 +242,24 @@ val foo : ?z:int -> int -> int -> bool = <fun>
 # foo 2 1;;
 - : bool = true
 ```
+
+### 20、 ``` ` ```
+
+- 表示多态变体的符号。还有其他多态变体符号 ``` [> ``` 和 ``` [< ``` 
+
+```ocaml
+#  type card =  [  `Jorker  |  `Num  of  int  ];;  (* 多态变体类型 *) 
+type card =  [  `Jorker  |  `Num  of  int  ] 
+
+#  type in_data =  [  `Str  of  string  |  `Num  of  int  ] ;;  (* 多态变体类型 *) 
+type in_data =  [  `Num  of  int  |  `Str  of  string  ] 
+
+#  let get_number=  function  (* 接收多态变体参数 *) 
+    `Num i -> i
+   |  _  -> failwith " not a number " ;; 
+val get_number: [>  ` Num  of 'a ]  -> ' a =  <fun > 
+
+# get_number ( `Num  3 ) ;;  (* 应用多态变体类型 *) 
+-: int  =  3
+```
+
