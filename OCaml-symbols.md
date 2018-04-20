@@ -179,6 +179,20 @@ type location = {
 - ``` := ``` 引用（指针）（赋值（当解引用不提供左值））, ``` <- ``` 变量赋值或声明（赋值）, 例如：
 
 ```ocaml
+# let y = ref None;;
+val y : '_a option ref = {contents = None}
+# y;;
+- : '_a option ref = {contents = None}
+# y := Some 3;;
+- : unit = ()
+# y;;
+- : int option ref = {contents = Some 3}
+# y := None;;
+# y;;
+- : int option ref = {contents = None}
+
+
+
 let s = "hello world";;
 let s' = s;;
 s.[0] <- 'x';;
@@ -281,5 +295,31 @@ val get_number: [>  ` Num  of 'a ]  -> ' a =  <fun >
 
 ### 21、 ``` @@ ``` 和  ``` |> ```
 
-- OCaml 4.01 新添加的两个内置运算符：``` @@ ``` 和 `` |> ```
+- OCaml 4.01 新添加的两个内置运算符：``` @@ ``` 和 ``` |> ```，它们非常简单，你可以在像这样的旧版本中自己定义它们：
+```ocmal
+let (@@) fn x = fn x
+let (|>) x fn = fn x
 
+(* 以下这两个是一样的 *)
+print @@ "Hello";;
+print "Hello";;
+
+```
+- 例如，这两行是等价的（我们加载一个文件，将其解析为XML，将生成的文档解析为选择文档，然后执行选择）
+```ocaml
+execute (parse_selections (parse_xml (load_file path)))
+
+execute @@ parse_selections @@ parse_xml @@ load_file path
+
+(* 代码来自 http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/ *)
+```
+- 这样做的好处是，当你阅读一个 ``` ( ```，你必须沿着括号中的其余行扫描来找到匹配的。当你看到 ```@@``` 时，你知道表达式的其余部分是前一个单一的参数功能。
+
+- 管道运算符 ```|>``` 是相似的，但函数和参数是相反的。以下两行是相同的：
+```ocaml
+execute @@ parse_selections @@ parse_xml @@ load_file path
+
+load_file path |> parse_xml |> parse_selections |> execute
+
+(* 代码来自 http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/ *)
+```
