@@ -243,7 +243,9 @@ val foo : ?z:int -> int -> int -> bool = <fun>
 - : bool = false
 # foo 2 1;;
 - : bool = true
+
 (* 代码来自 https://stackoverflow.com/questions/23703470/ocaml-optional-argument *)
+
 ```
 
 ### 20、 ``` ` ```
@@ -266,6 +268,9 @@ val get_number: [>  ` Num  of 'a ]  -> ' a =  <fun >
 # get_number ( `Num  3 ) ;;  (* 应用多态变体类型 *) 
 -: int  =  3
  
+ 
 (* 代码来自 http://osiire.hatenablog.com/entries/2009/05/10 *)
+
+
 ```
 
