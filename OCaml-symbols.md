@@ -360,3 +360,5 @@ val a : int list = [2; 3; 4; 5; 6]
 - http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/
 
 - https://stackoverflow.com/questions/23703470/ocaml-optional-argument
+
+- http://rigaux.org/language-study/syntax-across-languages-per-language/OCaml.html
