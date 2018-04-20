@@ -193,4 +193,11 @@ s';;
 
 # "a" = "a";;
 - : bool = true
+
+# "a" != "a";;
+- : bool = true
+
+# "a" <> "a";;
+- : bool = false
+
 ```
