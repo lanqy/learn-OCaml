@@ -248,7 +248,8 @@ val foo : ?z:int -> int -> int -> bool = <fun>
 
 ### 20、 ``` ` ```
 
-- 表示多态变体的符号。还有其他多态变体符号 ``` [> ``` 和 ``` [< ``` 
+- 表示多态变体的符号。还有其他多态变体符号 ``` [> ``` 和 ``` [< ``` 。
+- 可以结合 http://blog.klipse.tech/reason/2018/03/12/blog-reason-types.html 这篇文章来理解 ``` [> ``` 和 ``` [< ```。
 
 ```ocaml
 #  type card =  [  `Jorker  |  `Num  of  int  ];;  (* 多态变体类型 *) 
