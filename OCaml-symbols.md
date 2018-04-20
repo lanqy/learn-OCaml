@@ -353,4 +353,10 @@ let a = [2;3] @ [4;5;6];;
 val a : int list = [2; 3; 4; 5; 6]
 ```
 
-参考资料： https://qiita.com/szktty/items/05cb2b754c88fbacc274
+参考资料：
+
+- https://qiita.com/szktty/items/05cb2b754c88fbacc274
+
+- http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/
+
+- https://stackoverflow.com/questions/23703470/ocaml-optional-argument
