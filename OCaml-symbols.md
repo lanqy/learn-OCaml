@@ -228,3 +228,17 @@ val f : x:int -> y:int -> int = <fun>
 #f ~x:3 ~y:2;;
 - : int = 1
 ```
+
+### 19、 ``` ? ```
+
+- 可选参数 = 用于标记参数的符号，可以省略。例如：
+```ocaml
+# let foo ?(z = 0) x y = x + y > z;;
+val foo : ?z:int -> int -> int -> bool = <fun>
+# foo 3 3 ~z: 2;;
+- : bool = true
+# foo 3 3 ~z: 10;;
+- : bool = false
+# foo 2 1;;
+- : bool = true
+```
