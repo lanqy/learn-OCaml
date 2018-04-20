@@ -49,7 +49,17 @@ match s with
 
 ### 7、 ``` :: ```
 
-- 合成列表的操作符，``` x :: xs ``` 在 ``` xs ``` 列表的开头添加一个 ``` x ``` 元素
+- 合成列表的操作符，``` x :: xs ``` 在 ``` xs ``` 列表的开头添加一个 ``` x ``` 元素，例如：
+```ocaml
+# let a = [2;3;4;5];;
+val a : int list = [2; 3; 4; 5]
+# let b = 1 :: a;;
+val b : int list = [1; 2; 3; 4; 5]
+
+# let a = 1 :: 2 :: 3 :: [];;
+val a : int list = [1; 2; 3]
+
+```
 
 ### 8、 ``` ' ```
 
@@ -322,4 +332,23 @@ execute @@ parse_selections @@ parse_xml @@ load_file path
 load_file path |> parse_xml |> parse_selections |> execute
 
 (* 代码来自 http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/ *)
+```
+
+### 22、 ``` ;; ```
+
+- 顶层环境的结束符。例如：
+
+```ocaml
+let a = [2;3;4;5];;
+val a : int list = [2; 3; 4; 5]
+
+```
+
+### 23、 ``` @ ```
+
+- 列表的连接符
+
+```ocaml
+let a = [2;3] @ [4;5;6];;
+val a : int list = [2; 3; 4; 5; 6]
 ```
