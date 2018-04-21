@@ -76,7 +76,7 @@ val reverse : 'a list -> 'a list = <fun>
 
 fun 和 match 通过组合定义一个匿名函数
 
-function 模式1 - >表达式|模式2 - >表达式...
+function 模式1 - > 表达式 | 模式2 - > 表达式...
 
 上面整数列表的总和的例子可以改写如下：
 
@@ -138,14 +138,14 @@ match 表达式 with 模式1 when 真/假表达式 - >表达式| ...
 
 #### 记录（record）
 
-C语言结构，数据结构等同于Python字典。
+C语言结构，数据结构等同于 Python 字典。
 
 命名元素名称。
 
 #### 记录定义
 
 * type name = {field name：type; ...}
-* 字段 - >名称和值对
+* 字段 - > 名称和值对
 * 请注意，字段名称不能与其他记录重复
 
 ```ocaml
@@ -183,8 +183,8 @@ type name =
 ```
 * 构造函数以英文大写字母开头
 * of 是构造函数所需的参数类型
-* of int * int 参数不是一组int，两个int
-* of (int * int) 参数是一对int
+* of int * int 参数不是一组 int ，两个 int
+* of (int * int) 参数是一对 int
 
 以下是四种数字的变体类型：
 
@@ -192,7 +192,7 @@ type name =
 # type figure =
   | Point
   | Circle of int
-  | Rectangle of int * int (* 两个int类型的参数，不是元组 *)
+  | Rectangle of int * int (* 两个 int 类型的参数，不是元组 *)
   | Square of int;;
 type figure = Point | Circle of int | Rectangle of int * int | Square of int
 
@@ -222,7 +222,7 @@ val area : figure -> int = <fun>
 
 ### 多态变体类型
 
-* 可以使用类型变量（'a等）来定义变体类型，
+* 可以使用类型变量（ 'a 等）来定义变体类型，
 * 它也被称为带参数的参数。
 * 例如，'a list 可以使用多态变量来表示。
 
@@ -356,7 +356,7 @@ val tr : int btree = Node (10, Node (5, Leaf, Leaf), Node (20, Leaf, Leaf))
 
 玫瑰树是元素数量未知的树。
 
-它可以被认为是与UNIX相同的目录结构。
+它可以被认为是与 UNIX 相同的目录结构。
 
 * 类型定义 
 
@@ -369,7 +369,7 @@ XML作为玫瑰树
 
 * 类型定义
 
-因为它是XML，叶子也没有价值 - >（'b option）
+因为它是 XML ，叶子也没有价值 - >（'b option）
 
 ```ocaml
 (* 'a 标记, 'b 值 *)
@@ -412,7 +412,7 @@ val f : int -> intseq = <fun>
 # f 100;;
 - : intseq = Cons (101, <fun>)
 ```
-* 如果返回值的x是下一个元素
+* 如果返回值的 x 是下一个元素
 
    通过给x作为参数，我们得到元素的顺序
    
@@ -427,7 +427,7 @@ val f : int -> intseq = <fun>
 val x : int = 3
 val f : int -> intseq = <fun>
 ```
-* 获取第N个元素函数
+* 获取第 N 个元素函数
 
 ```ocaml
 # let rec nthseq n (Cons(x, f)) =
