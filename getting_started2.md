@@ -1,4 +1,4 @@
-## OCaml简介第2部分
+## OCaml简介第 2 部分
 
 ### 递归多层数据结构。
 * 列表类型
@@ -29,7 +29,7 @@ Error: This expression has type string but an expression was expected of type in
 
 ### 列表合并
 
-使用@。
+使用 @ 。
 
 ```ocaml
 # [] @ [];;
@@ -44,7 +44,7 @@ Error: This expression has type string but an expression was expected of type in
 
 match 表达式
 
-match 表达式 with 模式1 - >表达式|模式2 - >表达式...
+match 表达式 with 模式1 - >表达式 | 模式2 - >表达式...
 
 找到整数列表的总和的例子:
 
