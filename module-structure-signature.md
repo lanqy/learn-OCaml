@@ -25,3 +25,31 @@ module Stack0 : sig
   val pop : 'a list -> 'a * 'a list
 end
 ```
+
+- 这个模块有问题，类型 ``` 'a Stack0.t ``` 把 ``` 'a list ``` 暴露在外面，用户将能够打破模块化，例如，通过 ``` push ```
+为了解决这个问题，我们使用模块的签名来隐藏 Stack.t 类型。首先，用模块类型声明定义堆栈模块签名 STACK
+
+```ocaml
+module type STACK = sig
+  type 'a t
+  val create : unit -> 'a t
+  val push : 'a -> 'a t -> 'a t
+  val pop : 'a t -> 'a, 'a t
+end
+```
+
+- 签名是一种模块，可以说是一种指定模块的功能和类型如何从外部看的方式。将来我们会称之为签名或模块类型
+接下来，用STACK限制堆栈模块的类型。
+```ocaml
+module Stack : STACK (* 隐藏 *) = struct
+  type 'a t = 'a list
+  let create () = []
+  let push x s = x::s
+  let pop = function
+    | x::xs -> x, xs
+    | [] -> failwith "Empty stack"
+end
+
+(* 或 *)
+module Stack : STACK = Stack0
+```
