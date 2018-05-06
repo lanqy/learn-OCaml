@@ -7,7 +7,7 @@
 
 一个免责声明：我有使用 Haskell 的经验，所以我可能会在这里使用静态类型化/函数式语言的一些无意识的知识。
 
-- [在您的系统上安装 OCaml](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#在您的系统上安装 OCaml)
+- [在您的系统上安装 OCaml](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#在您的系统上安装OCaml)
 - [基础知识](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基础知识)
 - 穿过车间
 - Hello World：/ 01-介绍
