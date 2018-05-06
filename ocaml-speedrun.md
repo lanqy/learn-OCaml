@@ -10,7 +10,7 @@
 - [在您的系统上安装 OCaml](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#在您的系统上安装ocaml)
 - [基础知识](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基础知识)
 - [快速预览](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#快速预览)
-- [Hello World：/ 01-介绍](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#Hello World：/ 01-介绍)
+- [Hello World：/ 01-介绍](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#Hello-World：/ 01-介绍)
 - [基本数据类型：/ 02-basic_types](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基本数据类型：/ 02-basic_types)
 - 定义函数：/ 03-define_functions
 - 调用函数：/ 04-call_functions
@@ -116,3 +116,143 @@ Error: This expression has type float but an expression was expected of type
 ```ocaml
 let float_average x y = (x +. y) /. 2.
 ```
+
+# 定义函数
+
+这个非常简单。我确实喜欢这个事实
+
+> 在 OCaml 中，字符串之外，空格和换行符是相同的。
+
+### 解决方案
+
+```ocaml
+let plus x y = x + y
+
+let times x y = x * y
+
+let minus x y = x - y
+
+let divide x y = x / y
+
+```
+
+# 调用函数
+
+两个数字的平均值相加，然后减半。
+
+
+
+
+```ocaml
+
+let square x = x * x
+let half x = x / 2
+let add x y = x + y
+
+let average x y = half (add x y)
+
+```
+
+玩弄多行语法和隐式返回，这也是可行的：
+
+```ocaml
+let average x y = 
+    let res = add x y in
+    half res
+```
+
+这也是如此：
+
+```ocaml
+let average x y = 
+    let res = add
+        x
+        y in
+    half
+        res
+```
+
+# 作为参数的函数
+
+我觉得作为一流公民的职能到处都是很好的接受概念。
+
+### 解决方案
+
+```ocaml
+let add1 = x + 1
+let square x = x * x
+let twice f x = f (f x)
+let add2 = twice add1
+let raise_to_the_fourth = twice square
+```
+
+# 模式匹配：
+
+另一个来自 [Haskell](https://www.haskell.org/tutorial/patterns.html) 的熟悉模式正在 [Javascript](https://github.com/tc39/proposal-pattern-matching) 中提出。但需要一个特殊的关键字匹配 `_`。
+
+### 解决方案
+
+```ocaml
+let non_zero x = 
+    match x with
+    | 0 -> false
+    | _ -> true
+```
+
+# 递归
+
+请参阅：递归。递归函数需要用let rec声明
+
+### 解决方案
+```ocaml
+let rec add_every_number_up_to x = 
+（*请确保我们不会将此号码称为负数！*）
+ assert (x >= 0);
+ match x with
+ | x -> 0
+ | _ -> x + (add_every_number_up_to (x - 1))
+
+ (* 让我们编写一个函数将每个数字乘以x。记得：[factorial 0] is 1 *)
+
+ let rec factorial x = 
+    assert (x >= 0);
+    match x with
+    | 0 -> 1
+    | 1 -> 1
+    | _ -> x * (factorial (x - 1))
+```
+
+# 数据类型：链接列表
+
+本练习将数组与模式匹配和递归配对。这里棘手的新问题是立即解构你正在匹配的列表，这让我绊倒了一下。但是，如果仔细观察，提供的长度示例是有益的。
+
+### 解决方案
+
+```ocaml
+let rec sum lst = 
+    match lst with
+    | [] -> 0
+    | hd :: tl -> hd + (sum(tl))
+```
+
+# 创建列表
+
+这又是一个递归的答案。你想使范围函数递归，然后自始至终调用自己，直到等于to_。我最初试过这个：
+
+```ocaml
+let rec range from to_ = 
+    match from with
+    | to_ -> []
+    | _ -> (from :: (range (from + 1) to_))
+```
+
+这没有效果，因为匹配分配给to_，而不是与恼人的比较。
+
+### 解决方案
+
+ ```ocaml
+ let rec range from to_ =
+  match from = to_ with
+  | true -> []
+  | false -> (from :: (range (from + 1) to_))
+ ```
