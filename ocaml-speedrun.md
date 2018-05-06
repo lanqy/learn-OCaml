@@ -10,8 +10,8 @@
 - [在您的系统上安装 OCaml](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#在您的系统上安装ocaml)
 - [基础知识](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基础知识)
 - [快速预览](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#快速预览)
-- Hello World：/ 01-介绍
-- 基本数据类型：/ 02-basic_types
+- [Hello World：/ 01-介绍](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#Hello World：/ 01-介绍)
+- [基本数据类型：/ 02-basic_types](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基本数据类型：/ 02-basic_types)
 - 定义函数：/ 03-define_functions
 - 调用函数：/ 04-call_functions
 - 函数作为参数：/ 05-两次
@@ -62,3 +62,57 @@ open! Base
 `git clone https://github.com/janestreet/learn-ocaml-workshop`
 
 打开 `/02-exercises` 目录。我们将要经历所有这些！
+
+# Hello World：/ 01-介绍
+
+正如它在 problem.ml 中所说的，只需运行 jbuilder runtest 即可看到错误：
+
+```ocaml
+✝  learn-ocaml-workshop/02-exercises/01-introduction> jbuilder runtest
+Entering directory '/Users/swyx/ocaml/learn-ocaml-workshop'
+         ppx 02-exercises/01-introduction/problem.pp.ml (exit 1)
+(cd _build/default && ./.ppx/ppx_jane/ppx.exe --dump-ast --cookie 'library-name="problem_1"' -o 02-exercises/01-introduction/problem.pp.ml --impl 02-exercises/01-introduction/problem.ml)
+File "02-exercises/01-introduction/problem.ml", line 25, characters 22-23:
+Error: String literal not terminated
+```
+
+所以如果你修复第25行：let () = Stdio.printf "Hello，World!" 通过添加最后一个引号，你会得到
+
+```ocaml
+✝  learn-ocaml-workshop/02-exercises/01-introduction> jbuilder runtest
+Entering directory '/Users/swyx/ocaml/learn-ocaml-workshop'
+         run alias 02-exercises/01-introduction/runtest
+Hello, World!
+```
+
+欢乐世界！注意运行 jbuilder 时如何添加新的 .merlin 文件 - 这是编译器在工作。
+
+# 基本数据类型：/ 02-basic_types
+
+再次前往 problem.ml ，并给它一个阅读。你的任务是在 65 和 68 行上实现这两个函数：
+
+```ocaml
+let int_average x y = failwith "For you to implement"
+
+(* val float_average : float -> float -> float *)
+let float_average x y =  failwith "For you to implement"
+```
+如果您再次运行 jbuilder，则会看到错误，因为这些函数当前使用 “failwith” 实现。是时候真正实现了！
+
+注意类型签名被注释掉了。该文件夹也有一个 problem.mli 文件。这个文件声明了关联文件的接口，并且恰好有你需要的特征，所以我们不需要担心它。
+
+### 解决方案
+
+`int_average` 可以用以下方法解决： `let int_average x y = (x + y) / 2` 这是有道理的。但是 `float_average` 需要特定于浮点的运算符（这与 Haskell 不同），否则您将得到此错误：
+
+```ocaml
+File "02-exercises/02-basic_types/problem.ml", line 163, characters 27-29:
+Error: This expression has type float but an expression was expected of type
+         Base__Int.t = int
+```
+
+注意，如果你真的去了第163行，你可以看到产生该错误的测试。您可以使用浮点特定运算符（在第13-15行中提到）来解决此问题：
+
+```ocaml
+let float_average x y = (x +. y) /. 2.
+```
