@@ -5,10 +5,10 @@
 
 公平的警告：这篇文章不像一个正常的 Dev.To 文章，因为这是一个研讨会的指导漫游 - 你需要编码，否则这对你来说是完全没用的。但是，通过这 24 个示例（大约需要 2-3 个小时），您应该对 OCaml 中的关键语言特性有深刻的了解！
 
-和一个免责声明：我有使用 Haskell 的经验，所以我可能会在这里使用静态类型化/函数式语言的一些无意识的知识。
+一个免责声明：我有使用 Haskell 的经验，所以我可能会在这里使用静态类型化/函数式语言的一些无意识的知识。
 
-- 在您的系统上安装 OCaml
-- 基础知识
+- [在您的系统上安装 OCaml](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#在您的系统上安装 OCaml)
+- [基础知识](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基础知识)
 - 穿过车间
 - Hello World：/ 01-介绍
 - 基本数据类型：/ 02-basic_types
@@ -36,3 +36,7 @@
 - 数据类型：refs / 24-refs
 - 这是所有的谎言！
 - 额外的知识
+
+# 在您的系统上安装 OCaml
+
+# 
