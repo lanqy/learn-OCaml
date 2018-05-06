@@ -9,7 +9,7 @@
 
 - [在您的系统上安装 OCaml](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#在您的系统上安装ocaml)
 - [基础知识](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#基础知识)
-- 穿过车间
+- [快速预览](https://github.com/lanqy/learn-OCaml/blob/master/ocaml-speedrun.md#快速预览)
 - Hello World：/ 01-介绍
 - 基本数据类型：/ 02-basic_types
 - 定义函数：/ 03-define_functions
@@ -39,4 +39,26 @@
 
 # 在您的系统上安装OCaml
 
+按照这个：[https：//github.com/janestreet/install-ocaml](https：//github.com/janestreet/install-ocaml)。按照这些说明，我们没有任何问题。我在VS Code中为“开发IDE”扩展了我的开发环境，但 vim / emacs 也得到了很好的支持。Sublime 尚未支持。
+
 # 基础知识
+
+[opam](https://opam.ocaml.org/) 是 OCaml 的包管理器。如果您按照上述说明操作，您已经使用过它。
+
+作为上述过程的一部分，您还会安装Jane Street推荐的 utop ，作为比默认更好的“顶层”。 “顶层”也被称为 [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)。
+
+[merlin](https://github.com/ocaml/merlin) 是用于编译/语法突出显示/代码完成的引擎。
+
+我们不使用 “原始 OCaml” - 我们正在使用 Jane Street 的 [Base](https://opensource.janestreet.com/) 类库，它覆盖了OCaml 的 stdlib ( 标准库 ) 和他们的一些意见。这就是你将在所有问题集的第一行看到的内容：
+
+```ocaml
+open! Base
+```
+
+模块导入都是这样完成的。稍后我们会看到更多。
+
+# 快速预览
+
+`git clone https://github.com/janestreet/learn-ocaml-workshop`
+
+打开 `/02-exercises` 目录。我们将要经历所有这些！
