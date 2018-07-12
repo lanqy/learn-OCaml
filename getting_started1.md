@@ -1,6 +1,8 @@
 
 # OCaml简介第1部分
 
+译自 : https://qiita.com/zenwerk/items/3bdf7eef6b7511e11b2c 
+
 ## 函数式语言
 
 函数式语言 => 执行程序 = 执行表达式 
@@ -321,4 +323,4 @@ val id'：'_a - >'_a = <fun>
 val id'：'a - >'a = <fun>
 ```
 
-译自 : https://qiita.com/zenwerk/items/3bdf7eef6b7511e11b2c :)
+
