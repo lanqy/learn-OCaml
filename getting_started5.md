@@ -1,5 +1,7 @@
 ## OCaml简介第5部分
 
+译自：https://qiita.com/zenwerk/items/3844df72c5f4afb1782f
+
 ### 面向对象的功能
 
 #### 类声明
