@@ -313,4 +313,4 @@ val id'：'_a - >'_a = <fun>
 val id'：'a - >'a = <fun>
 ```
 
-Google translate from : https://qiita.com/zenwerk/items/3bdf7eef6b7511e11b2c :)
+译自 : https://qiita.com/zenwerk/items/3bdf7eef6b7511e11b2c :)
