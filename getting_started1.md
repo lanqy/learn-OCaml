@@ -304,20 +304,20 @@ val first : 'a * 'b -> 'a = <fun>
 
 ```ocaml
 （*定义身份函数*）
-＃let id x = x ;;
+# let id x = x ;;
 val id：'a - >'a = <fun>
 
 （*'_a不是一个类型方案
     因为id是一个值，一些实际的参数是必需的，计算是必要的。
 *）
-＃let id'= id id ;;
+# let id'= id id ;;
 val id'：'_a - >'_a = <fun>
 
 （*
     这种类型的方案
     通过添加参数x，id'变成了函数定义。
 *）
-＃let id'x = id id x ;;
+# let id'x = id id x ;;
 val id'：'a - >'a = <fun>
 ```
 
