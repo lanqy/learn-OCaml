@@ -1,5 +1,7 @@
 ## OCaml简介第 2 部分
 
+译自：https://qiita.com/zenwerk/items/603bd383fe5c6b8cace3
+
 ### 递归多层数据结构。
 * 列表类型
 ```ocaml
