@@ -1,5 +1,7 @@
 ## OCaml简介第4部分
 
+译自：https://qiita.com/zenwerk/items/244b84bee48bf61d2a51
+
 ### 模块
 
 它是程序的一部分，但在OCaml中被称为结构。
