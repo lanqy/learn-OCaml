@@ -1,5 +1,7 @@
 ## OCaml简介第3部分
 
+译自：https://qiita.com/zenwerk/items/bfc1978718b5da3f463b
+
 ### 异常处理
 
 它在您除以零或指定一个不存在的文件时发生。
