@@ -1,7 +1,9 @@
 ## OCaml简介第6部分
 
+译自：https://qiita.com/zenwerk/items/97d370d457008d8f01de
 
 ### 标记的参数
+
 #### 〜标签名称：
 
 * 你可以命名这个参数。
