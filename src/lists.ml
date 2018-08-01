@@ -67,3 +67,35 @@ let f = function
     | p1 -> e1
     | ...
     | pn -> en
+
+
+(*
+    给出一对整数列表，生成对的列表 
+    prods [(2,3); (4,7); (5,2)];;
+*)
+
+let rec prods (xs: (int * int) list): int list = 
+    match xs with
+    [] -> []
+    | (p1, p2) :: tail -> (p1 * p2) :: prods tail
+;;
+
+(* 
+    给出两个整数列表
+    如果列表长度不同，则返回None否则将列表拼接在一起创建一些对的列表
+    zip [2; 3] [4; 5] == Some [(2,4); (3,5)]
+    zip [5; 3] [4] == None
+    zip [4; 5; 6] [8; 9; 10; 11; 12] == None
+*)
+
+let rec zip (xs:int list) (ys:int list) : (int * int) list option = 
+    match (xs, ys) with
+    ([], []) -> Some []
+    | (hd::tail, []) -> None
+    | ([],hd::tail) -> None
+    | (x::xtail, y::ytail) ->
+        (match zip xtail ytail with
+            Some zs -> Some ((x, y)::zs)
+            | None -> None
+        )
+;;
