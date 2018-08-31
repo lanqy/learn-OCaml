@@ -32,3 +32,37 @@ getPassword "hellow";;
 getPassword "Pass";;
 
 getPassword "hello";;
+
+let fst (a, _) = a;;
+
+let snd (_, b) = b;;
+
+fst (2, 3);;
+
+fst ("a", 23);;
+
+snd (2, 3);;
+
+snd (2, "a");;
+
+List.map fst [("a", 12); ("b", 23); ("c", 23); ("d",67)];;
+
+List.map snd [("a", 12); ("b", 23); ("c", 23); ("d",67)];;
+
+let tpl3_1 (a, _, _) = a;;
+let tpl3_2 (_, a, _) = a;;
+let tpl3_3 (_, _, a) = a;;
+
+tpl3_1 (2, "OCaml", 2.323);;
+tpl3_2 (2, "OCaml", 2.323);;
+tpl3_3 (2, "OCaml", 2.323);;
+
+let divmod a b = a / b, a mod b;;
+
+divmod 10 3;;
+
+let swap (x, y) = (y, x);;
+
+swap (2, 3);;
+
+List.map swap [("a", 12); ("b", 23); ("c", 23); ("d", 67)];;
