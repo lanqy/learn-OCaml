@@ -14,7 +14,7 @@ let rec sum (alist: intlist): int =
     match alist with
     | Nil -> failwith "Error empty list"
     | Cons (a, Nil) -> a
-    | Cons (h, rmain) -> h + sum remain
+    | Cons (h, remain) -> h + sum remain
 
 let rec product (alist: intlist): int = 
     match alist with
@@ -52,16 +52,17 @@ let rec filter f alist =
             then Cons(e, filter f remain)
             else filter f remain
 
+let rec foldl func acc alist =
+    match alist with
+    | Nil -> acc
+    | Cons (hd, tl) -> func hd (foldl func acc tl)
+
 let rec foldl1 func alist = 
     match alist with
     | Nil -> failwith "Error empty list"
     | Cons (a, Nil) -> a
     | Cons (hd, tl) -> func hd (foldl func tl)
 
-let rec foldl func acc alist =
-    match alist with
-    | Nil -> acc
-    | Cons (hd, tl) -> func hd (foldl func acc tl)
 
 let rec nth alist n = 
     match (alist, n) with
@@ -85,3 +86,93 @@ let rec reverse(list: intlist): intlist =
     Nil -> Nil
     | Cons(hd, tl) -> append(reverse(tl), Cons(hd, Nil))
     
+let l1 = Nil
+let l2 = Cons(1, Nil)
+let l3 = Cons(2, l2)
+let l4 = Cons(3,l3)
+let l5 = Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil)))))
+
+List.map length [l1; l2; l3; l4; l5]
+
+List.map is_empty [l1; l2; l3; l4; l5]
+
+sum l1
+
+sum l2
+
+product l1
+
+product l2
+
+List.map head [l2; l3; l4; l5]
+
+last l1
+
+last l3
+
+map ((+) 1) Nil
+
+map ((+) 1) (Cons(1, Nil))
+
+map ((+) 1) (Cons(1, Cons(3, Cons(4, Cons(5, Nil)))))
+
+append(l4, l5)
+
+reverse l5
+
+let even x = x mod 2 == 0
+
+filter even l5
+
+l5
+
+nth l5 2
+
+nth l5 1
+
+foldl1 (+) l5
+
+foldl1 (fun x y -> x * y) l5
+
+foldl1 (fun x y -> x + 10 * y) l5
+
+foldl (+) 0 l5
+
+foldl (fun x y -> x * y) 2 l5
+
+take 0 l5
+
+take 1 l5
+
+iter (Printf.printf "= %d\n") l5
+
+
+type fileTree =
+    | File of string
+    | Folder of string * fileTree list;;
+
+let neg f x =  not (f x);;
+
+let relpath p str = p ^ "/" ^ str;;
+
+let scand_dir path =
+    Sys.readdir path
+    |> Array.to_list;;
+
+let is_dir_relpath path rel = 
+    Sys.is_directory (relpath path rel);;
+
+let rec walkdir path =
+    let files = path
+    |> scand_dir
+    |> List.filter @@ neg (is_dir_relpath path)
+    |> List.map (fun x -> File x) in
+
+    let dirs = path
+    |> scand_dir
+    |> List.filter (is_dir_relpath path)
+    |> List.map (fun x -> Folder (x, walkdir (relpath path x))) in
+    
+    dirs @ files;;
+
+walkdir "/Applications";;
