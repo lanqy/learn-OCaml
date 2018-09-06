@@ -410,3 +410,242 @@ fun1_float 100. 20.;;
 (* OR *)
 let fun1_float_ x y = OP.FL.(10. * x - 4. * y);;
 fun1_float_ 100. 20.;;
+
+
+(* Math / Float Functions *)
+
+(* Operators *)
+
+(+.);;
+(-.);;
+(/.);;
+( *. );;
+
+(* Power operator/ Exponentiation *)
+
+( ** );;
+
+List.map ((+.) 2.323) [10.23;3.4;30.;12.];;
+
+List.map (( *. ) 3.) [10.23;3.4; 30.;12.];;
+
+List.map (fun x -> 2. ** x) [1.;2.;3.;4.;5.;6.;7.;8.];;
+
+(* 绝对值 *)
+
+abs_float;;
+
+(* 平方根 *)
+
+sqrt;;
+
+(* 三角函数 *)
+sin;;
+cos;;
+tan;;
+atan;;
+atan2;;
+
+acos;;
+asin;;
+
+(* 曲线函数 *)
+cosh;;
+sinh;;
+tanh;;
+
+(* Logarithm and exp *)
+log;;
+log10;;
+exp;;
+
+ (* exp x -. 1.0, *)
+expm1;;
+
+(*  log(1.0 +. x)  *)
+log1p;;
+
+(* Remove Decimal Part *)
+floor;;
+
+ceil;;
+
+truncate;;
+
+int_of_float;;
+
+(* Float Constants *)
+
+infinity;;
+neg_infinity;;
+max_float;;
+min_float;;
+nan;;
+1. /. 0.;;
+-1 /. 0.;;
+
+(* Function Declaration *)
+
+let x = 34;;
+x;;
+let x = 10 in
+let x = 20 in
+let z = x * y in
+z - x -y;;
+
+let x = 10.25 in
+let y = 30. in
+x *. y;;
+
+let f x = 10 * x + 4;;
+f 4;;
+f 5;;
+let f (x, y) = x + y;;
+f (2, 5);;
+
+f (10, 5);;
+
+let add_floats x y = x +. y;;
+add_floats 10. 50.232;;
+
+let a_complex_function x y = 
+    let a = 10 * x in
+    let b = 5 * y + x in
+    a + b;;
+
+(*
+    a_complex_function 2 3
+        a = 10 * x -->  a = 10*2 = 20
+        b = 5 * 3  -->  b = 5*3 + 2 = 17
+        a + b      -->  20 + 17 = 37
+*)
+
+a_complex_function 2 3;;
+
+(* Function Inside functions *)
+
+let func1 x y = 
+    let ft1 x y = 10 * x + y in
+    let ft2 x y z = x + y - 4 * z in
+    let ft3 x y = x - y in
+    let z = 10 in
+    (ft1 x y) + (ft2 x y z) - (ft3 x y);;
+
+func1 4 5;;
+func1 14 5;;
+
+func1 20 (-10);;
+
+(* Returning More than one value *)
+
+let g x y = (10 * x, x + y);;
+
+g 4 5;;
+
+(* Declaring Functions with type signature. *)
+
+let func1 (x: int) (y:float):float = (float_of_int x) +. y;;
+
+func1 10 2.334;;
+
+let func2 (xy: (int * int)): int = (fst xy) + (snd xy);;
+func2 (5, 6);;
+
+let show (x:float) = Printf.printf "%.3f" x;;
+
+show 3.232;;
+
+let showxy (x, y): unit = Printf.printf "%.3f\n" (x +. y);;
+
+showxy (32.323, 100.232);;
+
+let doubel_list (list_of_floats: float list): float list = 
+    List.map (fun x -> 2.0 *. x) list_of_floats;;
+
+doubel_list [1.;2.;3.;4.;5.];;
+
+(* Declaring function type with anonymous functions. *)
+let func2' : (int * int) -> int = fun (a, b) -> a + b;;
+
+func2' (5, 6);;
+
+let showxy' : float * float -> unit = fun (x, y) ->
+    Printf.printf "%.3f\n" (x +. y);;
+
+showxy' (23.3, 5.34021);;
+
+(* Declaration functions that takes another function as argument *)
+let apply_to_fst f (x, y) = (f x, y);;
+let apply_to_fst2: ('a -> 'c) -> 'a * 'b -> 'c * 'b = 
+    fun f (x, y) -> (f x, y);;
+
+let f x = x + 10;;
+apply_to_fst f (10, "hello world");;
+apply_to_fst2 f (10, "hello world");;
+
+(* Declaring functions with custom types *)
+type tuple_of_int = int * int;;
+type func_float_to_string = float -> string;;
+
+type func_tuple_of_ints_to_float = int * int -> float;;
+let x:tuple_of_int = (10, 4);;
+let f: func_float_to_string = fun x -> "x = " ^ (string_of_float x);;
+
+f 2.23;;
+
+let funct : tuple_of_int -> int = fun (x, y) -> x + y;;
+funct (10, 100);;
+
+let fxy : func_tuple_of_ints_to_float =
+    fun (x, y) -> 10.4 *. (float_of_int x) -. 3.5 *. (float_of_int y);;
+
+fxy;;
+
+fxy (10, 5);;
+
+type list_of_float = float list;;
+
+let double (xs: list_of_float):list_of_float = List.map (fun x -> 2.0 *. x) xs;;
+
+double [1.;2.;3.;4.;5.];;
+
+double;;
+
+let double2 : list_of_float -> list_of_float =
+    fun xs -> List.map (fun x -> 2.0 *. x) xs;;
+
+double2;;
+double2 [1.;2.;3.;4.;5.];;
+
+(* Functions with Named Parameters *)
+let f1 ~x ~y = 10 * x - y;;
+f1;;
+
+f1 4 5;;
+f1 20 15;;
+
+(* Currying Funcctions with named parameters *)
+
+f1 20;;
+f1 ~x:20;;
+let f1_20 = f1 ~x:20;;
+
+f1_20 10;;
+
+f1_20 40;;
+
+List.map (fun y -> f1_20 y) [1;2;10;20;30];;
+
+let show_msg x ~msg () = Printf.printf "%s = %d" msg x;;
+
+show_msg 2 "Hello world" ();;
+
+show_msg 20;;
+
+let f = show_msg 20;;
+
+f "x" ();;
+f "y" ();;
+List.iter f ["x"; "y"; "z"; "w"];;
+
+List.iter (fun msg -> f msg ()) ["x"; "y"; "z"; "w"];;
