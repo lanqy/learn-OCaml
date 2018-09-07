@@ -649,3 +649,439 @@ f "y" ();;
 List.iter f ["x"; "y"; "z"; "w"];;
 
 List.iter (fun msg -> f msg ()) ["x"; "y"; "z"; "w"];;
+
+(* Functions with Optional Parameters: *)
+
+(*
+    If the parameter x is not given, x will be set to 100
+*)
+
+let f ?(x = 100) y = 10 * x - 5 * y;;
+
+f;;
+
+(*
+    f 20 ==> (10*x - 5*y) 100 20
+             (10 * 10 - 5 * 20 )
+             (1000 - 100)
+             900
+ *)
+
+f 20;;
+
+(*
+    f 60 ==> (10*x - 5*y) 100 60
+             (10*100 - 5*60)
+             (1000 - 300)
+             700
+*)
+
+f 60;;
+
+List.map f [10;20;30;40;50];;
+
+f ~x:40 20;;
+
+f ~x: 50 20;;
+
+f ~x:40;;
+
+let f_x40 = f ~x: 40;;
+
+List.map f_x40 [10;20;30;40;50];;
+
+List.map (f ~x: 40) [10;20;30;40;50];;
+
+let rectangle_area ?(width = 30) ~height = width * height;
+
+rectangle_area 20;;
+rectangle_area 30;;
+
+List.map rectangle_area [10;20;30;40;50];;
+List.map (fun h -> rectangle_area h) [10;20;30;40;50];;
+rectangle_area ~width:200;;
+rectangle_area ~width:200 ~height:20;;
+
+List.map (fun h -> rectangle_area ~height:h ~width:30) [10;20;30;40;50];;
+
+(* Function Composition *)
+(* Operators: *)
+let (<<) f g x = f (g x);;
+
+(* F# Piping Composition Operator *)
+let (>>) f g x = g(f x);;
+
+(* F# Piping Operator *)
+let (|>) x f = f x;;
+let (<|) f x = f x;;
+
+(* Composition Operator *)
+let f1 x = 10 + x;;
+let f2 x = 2 * x;;
+let f3 x = x - 8;;
+f1(f2 (f3 10));;
+
+(f1 << f2 << f3) 10;;
+
+let f = f1 << f2 << f3;;
+
+(* Pipe Operators *)
+
+10 |> f3 |> f2 |> f1;;
+
+10 |> f3;
+
+2 |> f2;
+
+4 |> f1;
+
+10 |> (f3 >> f2 >> f1);;
+
+f3 >> f2 >> f1 <| 10;;
+
+(* Lambda Functions/ Anonymous Functions *)
+
+fun x -> x + 1;;
+
+fun x -> x +. 1.0;;
+
+fun x -> x ^ x;;
+
+fun (x, y) -> x + y;;
+
+fun (x, y) -> (y, x);;
+
+fun x y -> (x, y);;
+
+fun x y z -> (x, y, z);;
+
+fun x -> x + 1;;
+
+(fun x -> x + 1) 10;;
+
+let f = fun x -> x + 1;;
+
+f 10;;
+
+List.map (fun x -> x + 1) [1;2;3;4;5];;
+
+(* x = 1 *)
+(fun x y z -> 10 * x + 4 * z - 3 * x * y) 1;;
+
+(* x = 1 y = 2 *)
+(fun x y z -> 10 * x + 4 * z - 3 * x * y) 1 2;;
+
+(* x = 1 y = 2 z = 3 *)
+(fun x y z -> 10 * x + 4 * z - 3 * x * y) 1 2 3;;
+
+(* Partial Evaluation *)
+(*----------------------*)
+let f = fun x y z -> 10 * x + 4 * z - 3 * x * y;;
+
+(f 1);;
+
+((f 1) 2);;
+
+(((f 1) 2) 3);;
+
+f 1 2 3;;
+
+(* x= ?, y=?, z=3 The variables x and y varies *)
+List.map (fun (x, y) -> f x y 3) [(1, 2); (3, 4),(5, 6)];;
+
+(* x= ?, y=2, z=? The variables x and z varies *) 
+List.map (fun (x, z) -> f x 2 z) [(1, 2);(3, 4),(5,6)];
+
+(** Filtering                      *)
+(**--------------------------------*)
+
+List.filter (fun x -> x > 5) [1;2;3;4;5;6;7;8;9;10];;
+
+List.filter (fun (x, y) -> x + y > 10) [(-10, 30); (5, 4); (12, -8); (9, 8)];;
+
+[(-10, 30); (5, 4); (12, -8); (9, 8)] |> List.filter (fun (x, y) -> x + y > 10);;
+
+[(-10, 30); (5, 4); (12, -8); (9, 8)]
+|> List.filter (fun (x, y) -> x + y > 10)
+|> List.map (fun (x, y) -> 4 * x + 3 * y);;
+
+(*  Recursive Functions *)
+
+let rec factorial1 n = 
+    match n with
+    | 0 -> 1
+    | 1 -> 0
+    | k -> k * factorial1 (k -1);;
+
+let rec factorial2 = function
+    | 0 -> 1
+    | 1 -> 1
+    | n -> n * factorial2 (n - 1);;
+
+factorial1 5;;
+factorial2 5;;
+
+let rec map f xs = 
+    match xs with
+    | [] -> []
+    | h::tl -> (f h)::(map f tl);;
+
+map ((+) 5) [10;20;25;9];;
+
+let rec sumlist =  function
+    | [] -> 0
+    | [a] -> a
+    | (hd::tl) -> hd + sumlist tl;;
+
+sumlist [1;2;3;4;5;6;7;8;9];;
+
+let rec prodlist = function
+    | [] -> 1
+    | [a] -> a
+    | (hd::tl) -> hd * prodlist tl;;
+
+prodlist [1;2;3;4;5;6];;
+
+let rec filter f xs = 
+    match xs with
+    | [] -> []
+    | h::tl -> if f h
+               then h::(filter f tl)
+               else filter f tl;;
+
+filter (fun x -> x < 10) [1;2;3;4;5;6;10;30;20];;
+
+let rec take n xs = 
+    match (n, xs) with
+    | (0, _) -> []
+    | (_, []) -> []
+    | (k, h::tl) -> k::(take (n - 1) tl);;
+
+take 3 [1;2;3;4;5;6];;
+
+take 20 [20;19;18;17;16;15;14];;
+
+let rec drop n xs = 
+    if n < 0 then failwith "n negative"
+    else
+        match (n, xs) with
+        | (0, _) -> xs
+        | (_, []) -> []
+        | (k, h::tl) -> drop (k - 1) tl;;
+
+drop (-10) [1;2;3;4;5;6;7;8;9];;
+
+drop 10 [];;
+
+drop 0 [1;2;3;4;5;6;7;8;];;
+
+drop 5 [1;2;3;4;5;6];;
+
+drop 25 [1;2;3;4;5;6];;
+
+(*
+
+    Haskell Function:
+    foldl1 : ( a -> a -> a ) -> [a] -> [a]
+
+    > foldl1 (\x y -> 10*x + y) [1, 2, 3, 4, 5]
+    12345
+
+    foldl1 f  [1, 2, 3, 4, 5]  =
+    f 5 (f 4 (f 3 (f 1 2)))
+
+    foldl f [x0, x1, x2, x3, x4, x5 ... ] =
+
+    f xn (f xn-1 (f xn-2 ... (f x3 (f x2 (f x1 x0))))) ....
+
+    From: http://en.wikipedia.org/wiki/Fold_%28higher-order_function%29
+*)
+
+let rec foldl1 f xs = 
+    match xs with
+    | [] -> failwith "Empty list"
+    | [x] -> x
+    | (x::y::tl) -> foldl1 f (f x y :: tl);;
+
+foldl1 (fun x y -> 10 * x + y) [1;2;3;4;5];;
+
+let rec foldr1 f xs =
+    match xs with
+    | [] -> failwith "Empty list"
+    | [x] -> x
+    | x::tl -> f x (foldr1 f tl);;
+
+foldr1 (fun x y -> x + 10 * y) [1;2;3;4;5;6];;
+
+let rec foldr f acc xs =
+    match xs with
+    | [] -> acc
+    | x::tl -> f x (foldr f acc tl);;
+
+foldr (fun x y -> x + 10 * y) 0 [1;2;3;4;5;6];;
+
+let rec foldl f acc xs = 
+    match xs with
+    | [] -> acc
+    | x::tl -> fold1 f (f acc x) tl;;
+
+fold1 (fun x y -> 10 * x + y) 0 [1;2;3;4;5;6];;
+
+let rec range start stop step =
+    if start > stop
+    then []
+    else start::(range (start + step) stop step);;
+
+range 0 30 1;;
+
+range 0 100 10;;
+
+range (-100) 100 10;;
+
+(* Mutable References *)
+
+(** Declare a reference *)
+let x = ref 0;;
+
+(** Get the value of a reference *)
+!x;;
+
+(** Set the value of a reference *)
+(:=);;
+
+x := 100;;
+
+(** Update a reference *)
+x:= !x + 100;;
+x;;
+
+(** A reference can be accessed inside a function *)
+let x = ref 10;;
+
+let add_10_to_x () =
+    x := !x + 10;;
+
+add_10_to_x ();;
+
+(** Functions that operates references *)
+
+let y = ref 10;;
+
+let get_ref x = !x;;
+
+get_ref y;;
+
+let set_ref r new_value =
+    r := new_value;;
+
+set_ref y 100;;
+
+let add_x_to_ref r x =
+    r := !r + x;;
+
+add_x_to_ref y 200;;
+
+(* 
+    y <-- y + 1 + 2 + 3 + 4 + 5 + 6 
+*)
+List.iter (add_x_to_ref y) [1;2;3;4;5;6];;
+y;;
+
+(*******************)
+let y = ref 10;;
+
+let add_10_to_ref r = 
+    r := !r + 10;;
+
+add_10_to_ref y;;
+
+add_10_to_ref y;;
+
+(*********************************)
+let swap_ref a b =
+    let c = !a in
+        a := !b
+        b := c;;
+let x = ref 10;;
+let y = ref 20;;
+
+swap_ref x y;;
+
+x;;
+
+y;;
+
+(** Capturing references with closures *)
+let make_counter () =
+    let i = ref 0 in
+    fun () ->
+        i := !i + 1;
+        !i;;
+
+let counter1 = make_counter ();;
+
+counter1 ();;
+counter1 ();;
+counter1 ();;
+counter1 ();;
+
+let counter2 = make_counter ();;
+counter2 ();;
+counter2 ();;
+counter1 ();;
+
+let lst = ref [1.0;2.0;3.0];;
+
+!lst;;
+
+List.nth (!lst) 0;;
+List.nth (!lst) 2;;
+
+lst := List.map (fun x -> x *. 2.) !lst;;
+
+lst;;
+
+(* Control Structures *)
+
+(* Conditional Expressions *)
+let test x =
+    if x > 0
+    then print_string "x is positive"
+    else print_string "x is negative";;
+
+test 10;;
+text (-10);;
+
+let sign x = 
+    if x = 0
+        then 0
+    else if x > 0
+        then 1
+        else (-1);;
+
+List.map sign [1;-1;0;2;3];;
+
+(* For Loop *)
+
+for i = 0 to 5 do
+    Printf.printf "= %i\n" i 
+done;;
+
+for i = 10 downto 1 do
+    Printf.printf "%d .." i
+done;;
+
+(* While Loop *)
+let j = ref 5;;
+
+while !j > 0 do
+    Printf.printf "x = %d\n" !j; j := !j - 1
+done;;
+
+(* Infinite While Loop *)
+
+let mainloop () =
+    while true do
+        print_string "hello world / hit return to continue";
+    done;
+    ;;
