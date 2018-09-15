@@ -9,3 +9,7 @@ print_char 'c';;
 let s = Printf.sprintf "x = %s y = %f z = %d" "hello" 2.2223 40;;
 
 print_string s;;
+
+Printf.printf "%d" 100;;
+Printf.printf "%s %d %f" "This is" 100 2.232;;
+Printf.printf "x = %s y = %f z = %d" "hello" 2.2232 40;;
