@@ -8,6 +8,10 @@ let rec fact x =
     | 0 -> 1
     | x -> x * fact (x - 1)
 
+let rec fact = function
+    | 0 -> 1
+    | n -> n * (fact (n - 1))
+
 (* 相互递归例子 *)
 let rec even n = 
     match n with
